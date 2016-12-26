@@ -45,3 +45,17 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+CMakeCache.txt
+glimac/CMakeCache.txt
+*.cmake
+
+*.bin
+
+*.log
+
+*.exe
+Makefile
+glimac/Makefile
+CMakeFiles/*
+glimac/CMakeFiles/*
+glimac/libglimac.a
