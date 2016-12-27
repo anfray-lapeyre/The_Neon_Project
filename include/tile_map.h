@@ -31,8 +31,8 @@ class Map
 		std::vector<Ennemi> ennemis;
 		std::vector<Objet> objets;
 		
-		std::vector<glimac::OBJMesh> ennemyMesh;
-		std::vector<glimac::OBJMesh> itemMesh;
+		std::vector<glimac::Model> ennemyMesh;
+		std::vector<glimac::Model> itemMesh;
 		
 		Map(){
 			nbtilesX=0;
@@ -67,6 +67,7 @@ class Map
 		void cleanTextures();
 		//Upload les modèles 3D des monstres
 		void LoadMeshes();
+		void DrawMeshes(GLint id, float time,glimac::Model m);
 		
 		//Gère la camera
 		void BuildMatrix(GLint Id);

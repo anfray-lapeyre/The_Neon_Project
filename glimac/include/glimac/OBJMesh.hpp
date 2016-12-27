@@ -43,7 +43,26 @@ namespace glimac {
 			
 			// Constructeur, prend en argument le nom du modèle à charger 
 
-			OBJMesh(std::string);
+			//OBJMesh(std::string);
+			//Vrai constructeur copie
+			OBJMesh(OBJMesh& other){
+				this->VAO=other.getVAO();
+				this->VBO=other.getVBO();
+				this->EBO=other.getEBO();
+				this->vertices = other.vertices;
+				this->indices = other.indices;
+				this->textures = other.textures;
+			};
+			
+			
+			OBJMesh(OBJMesh* other){
+				this->VAO=other->getVAO();
+				this->VBO=other->getVBO();
+				this->EBO=other->getEBO();
+				this->vertices = other->vertices;
+				this->indices = other->indices;
+				this->textures = other->textures;
+			};
 			
 			// Constructeur copie
 			OBJMesh(vector<ShapeVertex> vertices, vector<GLuint> indices, vector<Texture> textures)
@@ -58,7 +77,9 @@ namespace glimac {
 			
 			
 			
-			
+			GLuint getVAO(){return VAO;}
+			GLuint getVBO(){return VBO;}
+			GLuint getEBO(){return EBO;}
 			// Render the mesh
 			void Draw(GLuint ID);
 			

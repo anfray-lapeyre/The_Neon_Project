@@ -10,7 +10,7 @@ namespace glimac {
 	void Model::Draw(GLuint ID)
 	{
 		for(GLuint i = 0; i < this->meshes.size(); i++)
-			this->meshes[i].Draw(ID);
+			this->meshes[i]->Draw(ID);
 	}  
 	
 
@@ -25,32 +25,45 @@ namespace glimac {
             cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
             return;
         }
+
         // Retrieve the directory path of the filepath
         this->directory = path.substr(0, path.find_last_of('/'));
 
         // Process ASSIMP's root node recursively
         this->processNode(scene->mRootNode, scene);
+
 	}
 	
 	
 	void Model::processNode(aiNode* node, const aiScene* scene){
 		// Process each mesh located at the current node
+		cout << "Caca"<<endl;
+
         for(GLuint i = 0; i < node->mNumMeshes; i++)
         {
+			cout << "Brruh"<<endl;
             // The node object only contains indices to index the actual objects in the scene. 
             // The scene contains all the data, node is just to keep stuff organized (like relations between nodes).
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]]; 
-            this->meshes.push_back(this->processMesh(mesh, scene));			
+			cout << "Brruh1.5"<<endl;	
+			OBJMesh* test= this->processMesh(mesh, scene);
+			cout << test->vertices.size() << endl;
+            this->meshes.push_back(test);		
+			cout << "Brruh2"<<endl;			
         }
+		cout << "Caca2"<<endl;
+
         // After we've processed all of the meshes (if any) we then recursively process each of the children nodes
         for(GLuint i = 0; i < node->mNumChildren; i++)
         {
             this->processNode(node->mChildren[i], scene);
         }
+		cout << "Caca3"<<endl;
+
 	}
 	
 	
-	OBJMesh Model::processMesh(aiMesh* mesh, const aiScene* scene){
+	OBJMesh* Model::processMesh(aiMesh* mesh, const aiScene* scene){
 		// Data to fill
         vector<ShapeVertex> vertices;
         vector<GLuint> indices;
@@ -113,7 +126,8 @@ namespace glimac {
         }
         
         // Return a mesh object created from the extracted mesh data
-        return OBJMesh(vertices, indices, textures);
+		OBJMesh* ret = new OBJMesh(vertices, indices, textures);
+        return ret;
 	}
 	
 	

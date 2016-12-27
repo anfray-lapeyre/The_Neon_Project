@@ -284,6 +284,18 @@ void Map::LoadMeshes()
 	//Puis des ennemis
 }
 
+
+void Map::DrawMeshes(GLint id, float time, Model m){
+	 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0,0,-5*sin(time))); // Translation
+				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
+				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
+				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
+				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
+				 
+				 m.Draw(id);
+}
+
 void Map::DrawEnnemis(float time)
 {
 	Cube cube;

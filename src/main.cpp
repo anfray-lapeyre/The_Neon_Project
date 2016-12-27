@@ -95,9 +95,11 @@ int main(int argc, char** argv) {
 
      glBindBuffer(GL_ARRAY_BUFFER,0);
      glBindVertexArray(0);
-	
-	 Model ourModel("assets/models/suzanne.obj");
-      
+	 //Program program2 = loadProgram(applicationPath.dirPath() + "shaders/3D.vs.glsl", 
+      //                          applicationPath.dirPath() + "shaders/normals.fs.glsl");
+    //program2.use();
+	// Model ourModel("assets/models/graou.blend");
+
     //activer le test de profondeur du GPU
       glEnable(GL_DEPTH_TEST);
 	
@@ -189,13 +191,15 @@ int main(int argc, char** argv) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//Change la couleur de fond en un violet foncé qu'on utilise
+		program.use();
 		glClearColor(0.03529411764705882352941176470588f,0.0039215686274509803921568627451f,0.08627450980392156862745098039216f,1.f);
         glBindVertexArray(vao);
-		test.DrawMap(windowManager.getTime());
+		//test.DrawMap(windowManager.getTime());
 		
 		glBindTexture(GL_TEXTURE_2D,0);
         glBindVertexArray(0);
-		
+		//program2.use();
+		//test.DrawMeshes(program.getGLId(),windowManager.getTime(),ourModel);
         // Update the display
         windowManager.swapBuffers();
     }

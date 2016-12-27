@@ -36,13 +36,13 @@ namespace glimac {
 		
 		private:
 			/*  Model Data  */
-			vector<OBJMesh> meshes;
+			vector<OBJMesh*> meshes;
 			string directory;
 			vector<Texture> textures_loaded;
 			/*  Functions   */
 			void loadModel(string path);
 			void processNode(aiNode* node, const aiScene* scene);
-			OBJMesh processMesh(aiMesh* mesh, const aiScene* scene);
+			OBJMesh* processMesh(aiMesh* mesh, const aiScene* scene);
 			vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
 			
 		public:
