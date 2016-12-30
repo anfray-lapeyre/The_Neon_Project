@@ -2,7 +2,7 @@
 #define OBJET_H_
 
 
-#include "inclusion.h"
+#include "inclusion.hpp"
 
 
 class Objet

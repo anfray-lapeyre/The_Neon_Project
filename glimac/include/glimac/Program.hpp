@@ -12,6 +12,7 @@ public:
 	Program(): m_nGLId(glCreateProgram()) {
 	}
 
+	Program(int){}
 	~Program() {
 		glDeleteProgram(m_nGLId);
 	}

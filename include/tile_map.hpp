@@ -2,10 +2,10 @@
 #define TILEMAP_H_
 
 
-#include "inclusion.h"
-#include "objet.h"
-#include "ennemi.h"
-#include "player.h"
+#include "inclusion.hpp"
+#include "objet.hpp"
+#include "ennemi.hpp"
+#include "player.hpp"
 
 
 
@@ -21,6 +21,8 @@ class Map
 		GLuint ID;
 		int nbObjets,nbEnnemis;
 		
+		int actual_lvl;
+		
 		GLint LocMVPMatrix, LocMVMatrix, LocNormalMatrix;
 		glm::mat4 ProjMatrix, MVMatrix, NormalMatrix;
 		
@@ -33,6 +35,8 @@ class Map
 		
 		std::vector<glimac::Model> ennemyMesh;
 		std::vector<glimac::Model> itemMesh;
+		
+		Mix_Chunk *music, *musicBeep, *musicLoot;
 		
 		Map(){
 			nbtilesX=0;
@@ -57,11 +61,22 @@ class Map
 
 		//Charge les données dans la structure de carte grâce à l'adresse vers un fichier texte
 		void ChargerMap(const char* level);
+		//Load the datas in the structure thanks to the adress stored in the first txt file
+		void ReloadLevel();
+		
+		
 		
 		//Affiche la carte
 		void AfficherMap();
 		//Dessine la carte en 3D 
 		void DrawMap(float time);
+		//Draws the menu
+		void DrawMenu(float time, int hover);
+		//Draws the victory menu
+		void DrawVictoire(float time, int hover);
+		
+		
+		
 		//Gère les textures
 		void InitTextures(std::vector<std::string>);
 		void cleanTextures();
@@ -75,15 +90,38 @@ class Map
 
 		bool CollectObjets();
 		void UpdateEnnemis();
+		
+		void PlayFire(){Mix_PlayChannel(1,musicBeep,1);};
+		void PlayLoot(){Mix_PlayChannel(2,musicLoot,0);};
+		void PlayMusic(){Mix_PlayChannel(0,music,-1);};
+		void StopMusic(){Mix_HaltChannel(-1);};
+		void freeMusic(){
+			 Mix_FreeChunk(music);
+			Mix_FreeChunk(musicBeep);
+			Mix_FreeChunk(musicLoot);
+			music=NULL;
+			musicBeep=NULL;
+			musicLoot=NULL;
+			Mix_CloseAudio();
+		};
 	
 	
+	
+		void toNextLevel(){actual_lvl++;}
+		bool isLastLevel(){return actual_lvl+1>1;}
+		
+		
+		//Initialize de vbos and vaos
+		static void InitShaderDatas(GLuint vao, GLuint vbo);
+
+		
 	private : 
 		void ChargerMap_donnees(FILE* F);
 		void ChargerMap_level(std::ifstream& F);
 		void DrawEnnemis(float time);
 		void DrawObjets(float time);
 
-	
+		
 	
 };
 

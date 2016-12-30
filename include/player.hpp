@@ -2,8 +2,8 @@
 #define PLAYER_H_
 
 
-#include "inclusion.h"
-#include "objet.h"
+#include "inclusion.hpp"
+#include "objet.hpp"
 
 
 class Player

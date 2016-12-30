@@ -1,4 +1,4 @@
-#include "tile_map.h"
+#include "tile_map.hpp"
 
 
 #define CACHE_SIZE 5000
@@ -51,7 +51,19 @@ void Map::ChargerMap_donnees(FILE* F)
 		this->ennemis.push_back(Ennemi(infos[0],infos[1],infos[2],buf,infos[3],infos[4],infos[5],infos[6],buf2));
 	}
 	LoadMeshes();
-	// LoadList(tileset,m);
+	// Chargement de la musique
+	 music = Mix_LoadWAV("assets/music/CaravanPalace-LoneDigger.wav");
+    musicBeep = Mix_LoadWAV("assets/music/pew.wav");
+    musicLoot = Mix_LoadWAV("assets/music/laser.wav");
+
+    Mix_AllocateChannels(3);
+    
+    
+    Mix_VolumeChunk(music,MIX_MAX_VOLUME/2.);
+    Mix_VolumeChunk(musicBeep,MIX_MAX_VOLUME/2.);   
+    Mix_VolumeChunk(musicLoot,MIX_MAX_VOLUME/2.);
+
+    Mix_PlayChannel(0,music,-1);
 }
 
 /*
@@ -272,9 +284,21 @@ void Map::DrawMap(float time){
 	
 }
 
+
+
+//Draws the menu
+void DrawMenu(float time, int hover){
+	
+}
+//Draws the victory menu
+void DrawVictoire(float time, int hover){
+	
+}
+
+
 void Map::LoadMeshes()
 {
-	
+	//Assimp étant le fruit de l'union entre un démon et un étron, cette partie n'est pas implémentée
 	
 	//On s'occupe d'abord des objets
 	
@@ -563,4 +587,41 @@ void Map::UpdateMove(int vitesseF, int vitesseL, int rotateF)
 	}
 	player.UpdateMove(vitesseF,vitesseL, rotateF);
 }
+
+
+
+
+//Initialize de vbos and vaos
+void Map::InitShaderDatas(GLuint vao, GLuint vbo){
+	 Cube cube;
+	 
+     glBindBuffer(GL_ARRAY_BUFFER,vbo);
+
+     glBufferData(GL_ARRAY_BUFFER, cube.getVertexCount()*sizeof(ShapeVertex), cube.getDataPointer(), GL_STATIC_DRAW);
+
+     glBindBuffer(GL_ARRAY_BUFFER,0);
+	 
+	 
+
+     
+     glBindVertexArray(vao);
+
+
+     glEnableVertexAttribArray(VERTEX_ATTRIB_POSITION);
+     glEnableVertexAttribArray(VERTEX_ATTRIB_NORMALS);
+     glEnableVertexAttribArray(VERTEX_ATTRIB_TEXTURE);
+
+     glBindBuffer(GL_ARRAY_BUFFER,vbo);
+
+     glVertexAttribPointer(VERTEX_ATTRIB_POSITION,3,GL_FLOAT,GL_FALSE,sizeof(ShapeVertex), (const GLvoid *) (offsetof(ShapeVertex,position)));
+     glVertexAttribPointer(VERTEX_ATTRIB_NORMALS,3,GL_FLOAT,GL_FALSE,sizeof(ShapeVertex), (const GLvoid *) (offsetof(ShapeVertex,normal)));
+     glVertexAttribPointer(VERTEX_ATTRIB_TEXTURE,2,GL_FLOAT,GL_FALSE,sizeof(ShapeVertex), (const GLvoid *) (offsetof(ShapeVertex,texCoords)));
+
+     glBindBuffer(GL_ARRAY_BUFFER,0);
+     glBindVertexArray(0);
+}
+
+
+
+
 
