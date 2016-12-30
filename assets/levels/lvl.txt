@@ -5,7 +5,8 @@ assets/textures/mur.jpg
 assets/textures/sol.jpg
 assets/textures/mer.jpg
 assets/textures/porte.jpg
+assets/textures/victoire.jpg
 1
 1:5:12:PineApple 0:120:assets/models/bob.obj
 1
-2:10:13:Graou 2:30:0:20:assets/models/graou.obj
+2:10:13:Graou 2:30:15:20:assets/models/graou.obj

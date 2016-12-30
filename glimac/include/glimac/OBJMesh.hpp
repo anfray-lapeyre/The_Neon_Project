@@ -34,43 +34,34 @@ namespace glimac {
 		Classe OBJMesh : définition d'un modèle statique.
 		*/
 		private: 
-			GLuint VAO, VBO, EBO;
+			GLuint VAO, VBO;
 			void setupMesh();
 		public:
 			vector<glimac::ShapeVertex> vertices;
-			vector<GLuint> indices;
-			vector<Texture> textures;
 			
 			// Constructeur, prend en argument le nom du modèle à charger 
-
+			OBJMesh(){};
 			//OBJMesh(std::string);
 			//Vrai constructeur copie
 			OBJMesh(OBJMesh& other){
 				this->VAO=other.getVAO();
 				this->VBO=other.getVBO();
-				this->EBO=other.getEBO();
 				this->vertices = other.vertices;
-				this->indices = other.indices;
-				this->textures = other.textures;
+
 			};
 			
 			
 			OBJMesh(OBJMesh* other){
 				this->VAO=other->getVAO();
 				this->VBO=other->getVBO();
-				this->EBO=other->getEBO();
 				this->vertices = other->vertices;
-				this->indices = other->indices;
-				this->textures = other->textures;
+
 			};
 			
 			// Constructeur copie
-			OBJMesh(vector<ShapeVertex> vertices, vector<GLuint> indices, vector<Texture> textures)
+			OBJMesh(vector<ShapeVertex> vertices)
 			{
 				this->vertices = vertices;
-				this->indices = indices;
-				this->textures = textures;
-
 				// Now that we have all the required data, set the vertex buffers and its attribute pointers.
 				this->setupMesh();
 			}
@@ -79,7 +70,6 @@ namespace glimac {
 			
 			GLuint getVAO(){return VAO;}
 			GLuint getVBO(){return VBO;}
-			GLuint getEBO(){return EBO;}
 			// Render the mesh
 			void Draw(GLuint ID);
 			

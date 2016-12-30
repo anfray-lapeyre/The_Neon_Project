@@ -96,7 +96,7 @@ void GameManager::handleEvent(){
             {
                 if(SDL_BUTTON(SDL_BUTTON_LEFT))
                     // Mix_PlayChannel(1,musicBeep,1);//////////////////////////////////// A FAIRE
-				currentMap.PlayFire();
+					currentMap.PlayFire();
             }
 
 			else if (e.type == SDL_KEYDOWN){
@@ -204,6 +204,10 @@ void GameManager::Update(){
 		rotateL=0;
 		vitesseL=0;
 		vitesseF=0;
+		
+		if(currentMap.isFinished()){
+			this->state=GAME_WIN;
+		}
 
 }
 
@@ -270,9 +274,10 @@ void GameManager::DrawVictoire(){
     *********************************/
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBindVertexArray(vao);
-
+	// if(lives>0)
 	// currentMap.DrawVictoire(windowManager.getTime(),lives);
-		
+	// else
+	// currentMap.DrawDefaite(windowManager.getTime(),lives);
 	//We unbind any texture, just in case
 	glBindTexture(GL_TEXTURE_2D,0);
     glBindVertexArray(0);

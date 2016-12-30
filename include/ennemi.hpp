@@ -14,6 +14,7 @@ class Ennemi
 		std::vector<Objet> loot;
 		std::string nom;
 		std::string modele;
+		glimac::Model modele3D;
 		bool isAlerted;
 		
 		Ennemi(int id=0 ,int x=0, int y=0, std::string nom='\0', int attaque=0, int defense=0, int pv=0,int valeur=0, std::string modele='\0'){

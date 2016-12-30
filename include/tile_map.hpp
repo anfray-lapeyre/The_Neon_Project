@@ -27,7 +27,7 @@ class Map
 		glm::mat4 ProjMatrix, MVMatrix, NormalMatrix;
 		
 		GLint LocTexture;
-		GLuint textures[4];
+		GLuint textures[5];
 		
 		Player player;
 		std::vector<Ennemi> ennemis;
@@ -114,7 +114,7 @@ class Map
 		//Initialize de vbos and vaos
 		static void InitShaderDatas(GLuint vao, GLuint vbo);
 
-		
+		bool isFinished(){return schema[player.x][player.y]==5;}
 	private : 
 		void ChargerMap_donnees(FILE* F);
 		void ChargerMap_level(std::ifstream& F);

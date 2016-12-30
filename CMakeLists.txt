@@ -1,4 +1,4 @@
-project(GLNous) #name of the project
+project(The_Neon_Project) #name of the project
 add_definitions(-std=c++11)
 
 cmake_minimum_required(VERSION 2.8)

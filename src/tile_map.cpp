@@ -34,6 +34,8 @@ void Map::ChargerMap_donnees(FILE* F)
 	addrs.push_back(buf);
 	fscanf(F,"%s",buf); 
 	addrs.push_back(buf);
+	fscanf(F,"%s",buf); 
+	addrs.push_back(buf);
 	InitTextures(addrs);
 	
 	
@@ -221,7 +223,7 @@ void Map::DrawMap(float time){
 	for(int i=0;i<this->nbtilesY; i++){ //SOL
 		for(int j=0;j<this->nbtilesX; j++){
 			
-			if(schema[i][j]==1 ||schema[i][j]>3){
+			if(schema[i][j]==1 ||schema[i][j]==3){
 				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
@@ -243,6 +245,24 @@ void Map::DrawMap(float time){
 			}
 		}
 	}
+	glBindTexture(GL_TEXTURE_2D,textures[4]);
+	for(int i=0;i<this->nbtilesY; i++){ //SOL
+		for(int j=0;j<this->nbtilesX; j++){
+			
+			if(schema[i][j]==5){
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
+				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
+				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
+				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
+				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
+				 
+				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
+			}
+
+		}
+	}
+	
 	
 	glBindTexture(GL_TEXTURE_2D,textures[2]);
 	for(int i=0;i<this->nbtilesY; i++){ //EAU
@@ -303,21 +323,24 @@ void Map::LoadMeshes()
 	//On s'occupe d'abord des objets
 	
 	
-	
-	
+	// cout << ennemis[0].modele << endl;
+	// ennemis[0].modele3D=Model(ennemis[0].modele);
 	//Puis des ennemis
+	// for(auto& ennemi:ennemis){
+		// ennemi.modele3D=Model(ennemi.modele);
+	// }
 }
 
 
 void Map::DrawMeshes(GLint id, float time, Model m){
-	 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0,0,-5*sin(time))); // Translation
+	 // MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0,0,-5*sin(time))); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
-				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
-				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
-				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
-				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
+				// MVMatrix = player.camera.getViewMatrix()*MVMatrix;
+				 // glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
+				 // glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 // glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
 				 
-				 m.Draw(id);
+				 // m.Draw();
 }
 
 void Map::DrawEnnemis(float time)
@@ -335,7 +358,7 @@ void Map::DrawEnnemis(float time)
 		glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
 		glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
 		glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
-				 
+		// ennemi.modele3D.Draw();
 		glDrawArrays(GL_LINES,0,cube.getVertexCount());
 	}
 }
@@ -364,7 +387,7 @@ void Map::UpdateEnnemis()
 		
 		if(it->isAlerted)
 		{
-			cout << it->x + direction[0] << endl;
+			// cout << it->x + direction[0] << endl;
 			//cout << it->x << "," << it->y << endl;
 			if((distanceNorme<=5) && (distanceNorme >1))
 			{
@@ -410,7 +433,9 @@ void Map::UpdateEnnemis()
 				it->isAlerted=true;
 			}
 		}
+		cout << it->pv<<endl;
 	}
+
 }
 
 
@@ -476,6 +501,7 @@ void Map::InitTextures(vector<string> addr)
 	unique_ptr<Image> imgBrique = loadImage(addr[1]);
 	unique_ptr<Image> imgDoor = loadImage(addr[2]);
 	unique_ptr<Image> imgEau = loadImage(addr[3]);
+	unique_ptr<Image> imgVictoire = loadImage(addr[4]);
 
 	
 	glGenTextures(1,&this->textures[0]);
@@ -501,6 +527,13 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glGenTextures(1,&this->textures[3]);
     glBindTexture(GL_TEXTURE_2D,this->textures[3]);
     glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgEau->getWidth() ,imgEau->getHeight() ,0, GL_RGBA,GL_FLOAT,imgEau->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+	glGenTextures(1,&this->textures[4]);
+    glBindTexture(GL_TEXTURE_2D,this->textures[4]);
+    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgVictoire->getWidth() ,imgVictoire->getHeight() ,0, GL_RGBA,GL_FLOAT,imgVictoire->getPixels());
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

@@ -36,25 +36,26 @@ namespace glimac {
 		
 		private:
 			/*  Model Data  */
-			vector<OBJMesh*> meshes;
+			vector<vector<ShapeVertex>> meshes;
 			string directory;
-			vector<Texture> textures_loaded;
+			GLuint VAO, VBO;
 			/*  Functions   */
 			void loadModel(string path);
 			void processNode(aiNode* node, const aiScene* scene);
-			OBJMesh* processMesh(aiMesh* mesh, const aiScene* scene);
-			vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
-			
+			vector<ShapeVertex> vertexFromBlankMesh(aiMesh* mesh);
+			vector<ShapeVertex> vertexFromColoredMesh(aiMesh* mesh);
+			vector<ShapeVertex> vertexFromTexturedMesh(aiMesh* mesh);
+			void InitMesh();
 		public:
 			/*  Functions   */
 			Model(string path)
 			{
 				this->loadModel(path);
 			}
-			void Draw(GLuint ID);	
-
+			Model(){};
+			void Draw();	
+			
 	};
-	GLint TextureFromFile(const char* path, string directory);
 }
 
 #endif
