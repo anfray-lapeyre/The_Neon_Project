@@ -15,6 +15,7 @@ class Player
 		int orientation;
 		bool isInMovement;
 		bool isTurning;
+		float drowning;
 
 		
 		Player(int x=0, int y=0, int attaque=0, int defense=0, int pv=0,int gold=0){
@@ -24,6 +25,7 @@ class Player
 			this->defense=defense;
 			this->pv=pv;
 			this->gold=gold;
+			drowning=0.f;
 			orientation=0;
 			camera.m_Position = glm::vec3(this->x*2,-5,this->y*2);
 			isInMovement=false;
@@ -42,6 +44,7 @@ class Player
 			this->camera.m_Position = other.camera.m_Position;
 			this->isInMovement=other.isInMovement;
 			this->isTurning=other.isTurning;
+			this->drowning=other.drowning;
 		};
 		
 		~Player(){	};
@@ -70,6 +73,9 @@ class Player
 		void TurnLeft();
 		void TurnRight();
 		void UpdateRotCam();
+		void drown(){drowning+=0.001f;
+			
+		}
 	private : 
 		
 	

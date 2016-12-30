@@ -120,7 +120,7 @@ class Map
 		void ChargerMap_level(std::ifstream& F);
 		void DrawEnnemis(float time);
 		void DrawObjets(float time);
-
+		bool AreDoorUnlocked(int x,int y){return (schema[x][y]!=3 || (schema[x][y]==3 && player.gold>=100) ) ;}
 		
 	
 };

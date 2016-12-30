@@ -196,7 +196,7 @@ void Map::DrawMap(float time){
 		for(int j=0;j<this->nbtilesX; j++){
 			if(schema[i][j]==0){
 				
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4), -2*j)); // Translation
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -205,7 +205,7 @@ void Map::DrawMap(float time){
 				 
 				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
 				 
-				  MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4), -2*j)); // Translation
+				  MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -222,7 +222,7 @@ void Map::DrawMap(float time){
 		for(int j=0;j<this->nbtilesX; j++){
 			
 			if(schema[i][j]==1 ||schema[i][j]>3){
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4), -2*j)); // Translation
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -232,7 +232,7 @@ void Map::DrawMap(float time){
 				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
 			}
 			if(schema[i][j]==2){
-				MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -9+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4), -2*j)); // Translation
+				MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -9+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -249,7 +249,7 @@ void Map::DrawMap(float time){
 		for(int j=0;j<this->nbtilesX; j++){
 			
 			if(schema[i][j]==2){
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4), -2*j)); // Translation
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -268,7 +268,7 @@ void Map::DrawMap(float time){
 		for(int j=0;j<this->nbtilesX; j++){
 			
 			if(schema[i][j]==3){
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4), -2*j)); // Translation
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-(player.gold/100)*2, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -328,7 +328,7 @@ void Map::DrawEnnemis(float time)
 	glUniform1i(LocTexture,0); 
 	for(auto& ennemi : ennemis){
 		//On s'occupe d'abord des objets
-		MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*ennemi.x-sin(time*10)/50., -5.25-sin(time*10)/50.+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4), -2*ennemi.y+sin(time*13)/50.)); // Translation
+		MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*ennemi.x-sin(time*10)/50., -5.25-sin(time*10)/50.+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*ennemi.y+sin(time*13)/50.)); // Translation
 		MVMatrix = glm::scale(MVMatrix,glm::vec3(0.5,0.7+sin(time*10)/100.,0.2)); // Translation
 		// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 		MVMatrix = player.camera.getViewMatrix()*MVMatrix;
@@ -427,7 +427,7 @@ void Map::DrawObjets(float time)
 			//On sait que l'id ne fait pas partie de celui-ci
 			//Donc on le charge ! 
 		}*/
-		MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*objet.x, -5.5+cos(time)/20.+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4), -2*objet.y)); // Translation
+		MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*objet.x, -5.5+cos(time)/20.+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*objet.y)); // Translation
 		MVMatrix = glm::rotate(MVMatrix, time/5.f, glm::vec3(0.f,1.f,0.f));
 		MVMatrix = glm::scale(MVMatrix,glm::vec3(0.2+sin(time+1)/100.,0.2+sin(time+1)/100.,0.2+sin(time+1)/100.)); // Translation
 		// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
@@ -540,51 +540,167 @@ void Map::UpdateMove(int vitesseF, int vitesseL, int rotateF)
 		}
 		switch(player.orientation){
 			case 2:
-				if(vitesseF>0 && schema[player.x][player.y-1]!=0)
+				if(vitesseF>0 && (schema[player.x][player.y-1]!=0 && AreDoorUnlocked(player.x,player.y-1) )){
+					if(player.drowning<0.4 || schema[player.x][player.y-1]==2){
+						player.y--;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+				}
+				else if(vitesseF<0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
+					if(player.drowning<0.4 || schema[player.x][player.y+1]==2){
+						player.y++;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+				}
+				if(vitesseL>0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
+					if(player.drowning<0.4 || schema[player.x+1][player.y]==2){
+						player.x++;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+				}
 					
-					player.y--;
-				else if(vitesseF<0 && schema[player.x][player.y+1]!=0)
-					player.y++;
-				if(vitesseL>0 && schema[player.x+1][player.y]!=0)
-					player.x++;
-				else if(vitesseL<0 && schema[player.x-1][player.y]!=0)
-					player.x--;
+				else if(vitesseL<0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
+					if(player.drowning<0.4 || schema[player.x-1][player.y]==2){
+						player.x--;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+				}
+					
 			break;
 			case 3:
-				if(vitesseF>0 && schema[player.x-1][player.y]!=0)
-					player.x--;
-				else if(vitesseF<0 && schema[player.x+1][player.y]!=0)
-					player.x++;
-				if(vitesseL>0 && schema[player.x][player.y-1]!=0)
-					player.y--;
-				else if(vitesseL<0 && schema[player.x][player.y+1]!=0)
-					player.y++;
+				if(vitesseF>0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
+					if(player.drowning<0.4 || schema[player.x-1][player.y]==2){
+						player.x--;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+					
+				}
+				else if(vitesseF<0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
+					if(player.drowning<0.4 || schema[player.x+1][player.y]==2){
+						player.x++;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+					
+				}
+				if(vitesseL>0 && schema[player.x][player.y-1]!=0&& AreDoorUnlocked(player.x,player.y-1)){
+					if(player.drowning<0.4 || schema[player.x][player.y-1]==2){
+						player.y--;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+					
+				}
+				else if(vitesseL<0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
+					if(player.drowning<0.4 || schema[player.x][player.y+1]==2){
+						player.y++;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+					
+				}
 			break;
 			case 0:
-				if(vitesseF>0 && schema[player.x][player.y+1]!=0)
-					player.y++;
-				else if(vitesseF<0 && schema[player.x][player.y-1]!=0)
-					player.y--;
-				if(vitesseL>0 && schema[player.x-1][player.y]!=0)
-					player.x--;
-				else if(vitesseL<0 && schema[player.x+1][player.y]!=0)
-					player.x++;
+				if(vitesseF>0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
+					if(player.drowning<0.4 || schema[player.x][player.y+1]==2){
+						player.y++;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+					
+				}
+				else if(vitesseF<0 && schema[player.x][player.y-1]!=0&& AreDoorUnlocked(player.x,player.y-1)){
+					if(player.drowning<0.4 || schema[player.x][player.y-1]==2){
+						player.y--;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+					
+				}
+				if(vitesseL>0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
+					if(player.drowning<0.4 || schema[player.x-1][player.y]==2){
+						player.x--;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+					
+				}
+				else if(vitesseL<0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
+					if(player.drowning<0.4 || schema[player.x+1][player.y]==2){
+						player.x++;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+					
+			}
 			break;
 			case 1:
-				if(vitesseF>0 && schema[player.x+1][player.y]!=0)
-					player.x++;
-				else if(vitesseF<0 && schema[player.x-1][player.y]!=0)
-					player.x--;
-				if(vitesseL>0 && schema[player.x][player.y+1]!=0)
-					player.y++;
-				else if(vitesseL<0 && schema[player.x][player.y-1]!=0)
-					player.y--;
+				if(vitesseF>0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
+					if(player.drowning<0.4 || schema[player.x+1][player.y]==2){
+						player.x++;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+					
+				}
+				else if(vitesseF<0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
+					if(player.drowning<0.4 || schema[player.x-1][player.y]==2){
+						player.x--;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+					
+				}
+				if(vitesseL>0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
+					if(player.drowning<0.4 || schema[player.x][player.y+1]==2){
+						player.y++;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+					
+				}
+				else if(vitesseL<0 && schema[player.x][player.y-1]!=0&& AreDoorUnlocked(player.x,player.y-1)){
+					if(player.drowning<0.4 || schema[player.x][player.y-1]==2){
+						player.y--;
+					}
+					else{
+						player.drowning-=0.5;
+					}
+					
+				}
 			break;
 			default: 
 			break;
 			
 		}
 	}
+	if(schema[player.x][player.y]==2 && player.drowning < 2.5f){
+		player.drown();
+	}
+	else if(schema[player.x][player.y]!=2){
+		player.drowning=0;
+	}
+
 	player.UpdateMove(vitesseF,vitesseL, rotateF);
 }
 
