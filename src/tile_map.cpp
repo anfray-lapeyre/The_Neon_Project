@@ -585,7 +585,7 @@ void Map::DrawEnnemis(float time)
 	glUniform1i(LocTexture,0); 
 	for(auto& ennemi : ennemis){
 		//On s'occupe d'abord des objets
-		MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*ennemi.x-sin(time*10)/50., -5.25-sin(time*10)/50.+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*ennemi.y+sin(time*13)/50.)); // Translation
+		MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*ennemi.realX-sin(time*10)/50., -5.25-sin(time*10)/50.+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*ennemi.realY+sin(time*13)/50.)); // Translation
 		MVMatrix = glm::scale(MVMatrix,glm::vec3(0.5,0.7+sin(time*10)/100.,0.2)); // Translation
 		// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 		MVMatrix = player.camera.getViewMatrix()*MVMatrix;
@@ -597,8 +597,9 @@ void Map::DrawEnnemis(float time)
 	}
 }
 
-void Map::UpdateEnnemis()
+void Map::UpdateEnnemis(bool tour)
 {
+	
 	float distanceVect[2];	
 	int direction[2];
 	float distanceNorme;
@@ -606,79 +607,90 @@ void Map::UpdateEnnemis()
 
 	for(vector<Ennemi>::iterator it = ennemis.begin() ; it!=ennemis.end();it++)
 	{
-		//calcul vecteur distance, norme distance, direction vecteur
-		
-		distanceVect[0] = abs(it->x - player.x);
-		distanceVect[1]= abs(it->y - player.y);
-		
-		if((it->x - player.x) != 0)
-		{
-			direction[0] = -(it->x - player.x)/distanceVect[0]; //pour voir la direction du vecteur ennemi-player afin que l'ennemi parte pas dans l'autre sens
-			direction[1] = -(it->y - player.y)/distanceVect[1];
+		if(abs(it->realX - it->x) > VITESSE_DEPLACEMENT*2 || abs(it->realY - it->y) > VITESSE_DEPLACEMENT*2){
+			if(abs(it->realX - it->x) > VITESSE_DEPLACEMENT*2){
+				it->realX -= VITESSE_DEPLACEMENT/4.*abs(it->x+1)/(it->x+1);
+			}
+			if(abs(it->realY - it->y) > VITESSE_DEPLACEMENT*2){
+				it->realY -= VITESSE_DEPLACEMENT/4.*abs(it->y+1)/(it->y+1);
+			}
 		}
-		
-		else
-		{
-			direction[0] = 0;
-			direction[1] = 0;
-		}
-
-		//cout << direction[0] << "," << direction[1] << endl;
-
-		distanceNorme = std::sqrt(distanceVect[0]*distanceVect[0] + distanceVect[1] * distanceVect[1]);
-		
-		if(it->isAlerted)
-		{
-			//cout << distanceVect[0] + distanceVect[1] << endl;
-			if((distanceNorme<=6) && (distanceNorme > 0.5))
+		else if(tour){
+			//calcul vecteur distance, norme distance, direction vecteur
+			it->realX=it->x;
+			it->realY=it->y;
+			distanceVect[0] = abs(it->x - player.x);
+			distanceVect[1]= abs(it->y - player.y);
+			
+			if((it->x - player.x) != 0)
 			{
-				if(distanceVect[0] + distanceVect[1] == 1){
-					player.pv = player.pv - it->attaque;
-				}
+				direction[0] = -(it->x - player.x)/distanceVect[0]; //pour voir la direction du vecteur ennemi-player afin que l'ennemi parte pas dans l'autre sens
+				direction[1] = -(it->y - player.y)/distanceVect[1];
+			}
+			
+			else
+			{
+				direction[0] = 0;
+				direction[1] = 0;
+			}
 
-				else
+			//cout << direction[0] << "," << direction[1] << endl;
+
+			distanceNorme = std::sqrt(distanceVect[0]*distanceVect[0] + distanceVect[1] * distanceVect[1]);
+			
+			if(it->isAlerted)
+			{
+				//cout << distanceVect[0] + distanceVect[1] << endl;
+				if((distanceNorme<=6) && (distanceNorme > 0.5))
 				{
-					if(distanceVect[0] >= distanceVect[1])
-					{
-						if(schema[it->x+direction[0]][it->y] != 0)
-						{
-							it->x += direction[0];
-
-						}
-
-						else
-						{
-							it->y += direction[1];
-						}
+					if(distanceVect[0] + distanceVect[1] == 1){
+						player.pv = player.pv - it->attaque;
 					}
 
-					else if(distanceVect[0] < distanceVect[1])
+					else
 					{
-						if(schema[it->x][it->y+direction[1]] != 0)
+						if(distanceVect[0] >= distanceVect[1])
 						{
-							it->y += direction[1];
+							if(schema[it->x+direction[0]][it->y] != 0)
+							{
+								it->x += direction[0];
+
+							}
+
+							else
+							{
+								it->y += direction[1];
+							}
 						}
 
-						else
+						else if(distanceVect[0] < distanceVect[1])
 						{
-							it->x += direction[0];
+							if(schema[it->x][it->y+direction[1]] != 0)
+							{
+								it->y += direction[1];
+							}
+
+							else
+							{
+								it->x += direction[0];
+							}
 						}
 					}
+				//cout << it->x << "," << it->y << endl;
 				}
-			//cout << it->x << "," << it->y << endl;
-			}
 
-			else 
-			{
-				it->isAlerted = false;
-			}
+				else 
+				{
+					it->isAlerted = false;
+				}
 
-		}
-		else
-		{
-			if(distanceNorme<=3.5)
+			}
+			else
 			{
-				it->isAlerted=true;
+				if(distanceNorme<=3.5)
+				{
+					it->isAlerted=true;
+				}
 			}
 		}
 	}

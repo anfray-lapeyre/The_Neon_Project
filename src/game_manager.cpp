@@ -207,19 +207,11 @@ void GameManager::Update(){
 		rotateL=0;
 		vitesseL=0;
 		vitesseF=0;
-		if(currentMap.player.moveEnnemi)
-        {
-            currentMap.UpdateEnnemis();
-            currentMap.turn++;
-            currentMap.player.moveEnnemi=false;
-            //cout << "test" << endl;
-        }
+
+		currentMap.turn++;
+		currentMap.UpdateEnnemis(currentMap.player.moveEnnemi || windowManager.getTime()/2.f > currentMap.turn);
+		currentMap.player.moveEnnemi=false;
 		
-		 if(windowManager.getTime()/2.f > currentMap.turn)
-        {
-            currentMap.turn++;
-            currentMap.UpdateEnnemis();
-        }
 		cout << currentMap.player.pv << endl;
 		
 		if(currentMap.player.isDead()){

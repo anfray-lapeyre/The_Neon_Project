@@ -10,6 +10,7 @@ class Ennemi
 {
 	public :
 		int x,y,id;
+		float realX,realY;
 		int attaque,defense, pv;
 		std::vector<Objet> loot;
 		std::string nom;
@@ -17,7 +18,7 @@ class Ennemi
 		//glimac::Model modele3D;
 		bool isAlerted;
 		
-		Ennemi(int id=0 ,int x=0, int y=0, std::string nom='\0', int attaque=0, int defense=0, int pv=0,int valeur=0, std::string modele='\0'){
+		Ennemi(int id=0 ,int x=0, int y=0, std::string nom='\0', int attaque=0, int defense=0, int pv=0,int valeur=0, std::string modele='\0') : realX(x), realY(y){
 			this->id=id;
 			this->x=x;
 			this->y=y;
@@ -35,6 +36,8 @@ class Ennemi
 			this->id=other.id;
 			this->x=other.x;
 			this->y=other.y;
+			this->realX=other.realX;
+			this->realY=other.realY;
 			this->nom=other.nom;
 			this->attaque=other.attaque;
 			this->defense=other.defense;

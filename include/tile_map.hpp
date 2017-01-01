@@ -97,7 +97,7 @@ class Map
 		void UpdateMove(int vitesseF, int vitesseL, int rotateF);
 
 		bool CollectObjets();
-		void UpdateEnnemis();
+		void UpdateEnnemis(bool tour);
 		void AttackEnnemis();
 		
 		void PlayFire(){Mix_PlayChannel(1,musicBeep,1);};
