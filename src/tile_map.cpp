@@ -243,7 +243,8 @@ Map::~Map()
 
 //Dessine la carte en 3D 
 void Map::DrawMap(float time){
-	ProjMatrix = glm::perspective(glm::radians(70.f+sin(time)*sin(time)), 800.f/600.f,0.1f,100.f );
+	float life = (sin(glm::radians(90.f-player.pv)*time)*sin(glm::radians((90.f-player.pv)*time)))*(90.1f-player.pv)/5.f;
+	ProjMatrix = glm::perspective(glm::radians(70.f+sin(time)*sin(time)+life), 800.f/600.f,0.1f,100.f );
 	Cube cube;
 	//mat4 MVMatrix;
 	glBindTexture(GL_TEXTURE_2D,textures[0]);
@@ -252,7 +253,7 @@ void Map::DrawMap(float time){
 		for(int j=0;j<this->nbtilesX; j++){
 			if(schema[i][j]==0){
 				
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -261,7 +262,7 @@ void Map::DrawMap(float time){
 				 
 				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
 				 
-				  MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
+				  MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -277,7 +278,7 @@ void Map::DrawMap(float time){
 		for(int j=0;j<this->nbtilesX; j++){
 			if(schema[i][j]==0){
 				
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning+2, -2*j)); // Translation
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning+2-life/100.f, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -296,7 +297,7 @@ void Map::DrawMap(float time){
 		for(int j=0;j<this->nbtilesX; j++){
 			
 			if(schema[i][j]==1 ||schema[i][j]==3 ||schema[i][j]==4){
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -312,7 +313,7 @@ void Map::DrawMap(float time){
 		for(int j=0;j<this->nbtilesX; j++){
 			
 			if(schema[i][j]==5){
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -332,7 +333,7 @@ void Map::DrawMap(float time){
 			
 			if(schema[i][j]==2){
 				
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
 				 MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
 				 // MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));

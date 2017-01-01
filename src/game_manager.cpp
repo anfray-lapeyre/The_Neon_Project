@@ -259,7 +259,7 @@ void GameManager::Draw(){
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	program.use();
-	glClearColor(0.03529411764705882352941176470588f,0.0039215686274509803921568627451f,0.08627450980392156862745098039216f,1.f);
+	glClearColor(0.03529411764705882352941176470588f+(sin(glm::radians(90.f-currentMap.player.pv)*windowManager.getTime())*sin(glm::radians((90.f-currentMap.player.pv)*windowManager.getTime())))*(90.1f-currentMap.player.pv)/280.f,0.0039215686274509803921568627451f,0.08627450980392156862745098039216f,1.f);
 	
     glBindVertexArray(vao);
 	
