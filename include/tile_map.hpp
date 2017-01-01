@@ -18,32 +18,37 @@ class Map
 		char nom[200];
 		int depart[2]; //Contient orientation de départ
 		char adresseNiveau[200];
+		char adresseData[200];
 		GLuint ID;
 		int nbObjets,nbEnnemis;
 		
-		int actual_lvl;
+		int actual_lvl,nbLvls;
 		
 		GLint LocMVPMatrix, LocMVMatrix, LocNormalMatrix;
 		glm::mat4 ProjMatrix, MVMatrix, NormalMatrix;
 		
 		GLint LocTexture;
-		GLuint textures[5];
+		GLuint textures[6];
+		GLuint texturesMenu[7];
 		
 		Player player;
 		std::vector<Ennemi> ennemis;
 		std::vector<Objet> objets;
 		
-		std::vector<glimac::Model> ennemyMesh;
-		std::vector<glimac::Model> itemMesh;
+		//std::vector<glimac::Model> ennemyMesh;
+		//std::vector<glimac::Model> itemMesh;
 		
 		Mix_Chunk *music, *musicBeep, *musicLoot;
+		
+		int turn;
 		
 		Map(){
 			nbtilesX=0;
 			nbtilesY=0;
 			nbObjets=0;
 			nbEnnemis=0;
-			
+			turn = 0;
+			actual_lvl=0;
 		};
 		Map(GLuint id){
 			nbtilesX=0;
@@ -52,6 +57,8 @@ class Map
 			nbEnnemis=0;
 			this->BuildMatrix(id);
 			ID = id;
+			turn = 0;
+			actual_lvl=0;
 			
 		};
 		
@@ -75,14 +82,15 @@ class Map
 		//Draws the victory menu
 		void DrawVictoire(float time, int hover);
 		
-		
+		//Draws the defeat menu
+		void DrawDefaite(float time, int hover);
 		
 		//Gère les textures
 		void InitTextures(std::vector<std::string>);
 		void cleanTextures();
 		//Upload les modèles 3D des monstres
 		void LoadMeshes();
-		void DrawMeshes(GLint id, float time,glimac::Model m);
+		void DrawMeshes(GLint id, float time);//,glimac::Model m);
 		
 		//Gère la camera
 		void BuildMatrix(GLint Id);
@@ -90,6 +98,7 @@ class Map
 
 		bool CollectObjets();
 		void UpdateEnnemis();
+		void AttackEnnemis();
 		
 		void PlayFire(){Mix_PlayChannel(1,musicBeep,1);};
 		void PlayLoot(){Mix_PlayChannel(2,musicLoot,0);};
@@ -121,6 +130,7 @@ class Map
 		void DrawEnnemis(float time);
 		void DrawObjets(float time);
 		bool AreDoorUnlocked(int x,int y){return (schema[x][y]!=3 || (schema[x][y]==3 && player.gold>=100) ) ;}
+		void InitTexturesMenu();
 		
 	
 };

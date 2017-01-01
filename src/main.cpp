@@ -15,20 +15,22 @@ int main(int argc, char** argv) {
 	try{
 		//We create the game that will make all the loops, giving the adress to load a file from the current directory
 		GameManager game(argv[0]);
-		static const int N = 3;
+		static const int N = 4;
 		
 		//We create function pointers for the different states that the game will be in
-		ptrLoopFct loopFunc[N][N];
+		ptrLoopFct loopFunc[N][3];
 		//For the main loop, for every level
 		loopFunc[0][0]= &GameManager::handleEvent;loopFunc[0][1]= &GameManager::Update;loopFunc[0][2]=  &GameManager::Draw;
 		//For the menu
 		loopFunc[1][0]= &GameManager::handleEventMenu;loopFunc[1][1]= &GameManager::UpdateMenu;loopFunc[1][2]= &GameManager::DrawMenu;
 		//For the victory screen
 		loopFunc[2][0]= &GameManager::handleEventMenu;loopFunc[2][1]= &GameManager::UpdateVictoire;loopFunc[2][2]= &GameManager::DrawVictoire;
+		//For the defeat screen
+		loopFunc[3][0]= &GameManager::handleEventMenu;loopFunc[3][1]= &GameManager::UpdateVictoire;loopFunc[3][2]= &GameManager::DrawDefaite;
 		// Application loop:
 		while(game.isLooping()) {
 			//We alternate events handling, updating datas, and drawing
-			for (int i=0; i<N; i++) {
+			for (int i=0; i<3; i++) {
 				//Since the state is an enum, it is in fact an int, that we can use to get the right loop functions
 				(game.*loopFunc[game.getState()][i])();
 			}

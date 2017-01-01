@@ -14,7 +14,7 @@ class Ennemi
 		std::vector<Objet> loot;
 		std::string nom;
 		std::string modele;
-		glimac::Model modele3D;
+		//glimac::Model modele3D;
 		bool isAlerted;
 		
 		Ennemi(int id=0 ,int x=0, int y=0, std::string nom='\0', int attaque=0, int defense=0, int pv=0,int valeur=0, std::string modele='\0'){
@@ -25,7 +25,7 @@ class Ennemi
 			this->attaque=attaque;
 			this->defense=defense;
 			this->pv=pv;
-			this->modele = modele;
+			// this->modele = modele;
 			this->loot.push_back(Objet(0,0, 0,"monster", 0, valeur,"loot"));
 			isAlerted=false;
 			
@@ -39,7 +39,7 @@ class Ennemi
 			this->attaque=other.attaque;
 			this->defense=other.defense;
 			this->pv=other.pv;
-			this->modele=other.modele;
+			// this->modele=other.modele;
 			this->isAlerted=other.isAlerted;
 			for(int i=0;i<other.loot.size();i++){
 				this->loot.push_back(other.loot[i]);

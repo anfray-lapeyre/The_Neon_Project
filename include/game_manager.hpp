@@ -17,7 +17,8 @@
 enum GameState {
     GAME_PLAY,
     GAME_MENU,
-    GAME_WIN
+    GAME_WIN,
+	GAME_LOSE
 };
 
 class GameManager{
@@ -47,7 +48,7 @@ class GameManager{
 	/******************************************************************************************************
 									CONSTRUCTORS
 	******************************************************************************************************/								
-		GameManager() throw(int) : windowManager(WIDTH, HEIGHT, "The Neon Project"), loop(true), state(GAME_PLAY), keyPressed(0), vitesseF(0), vitesseL(0), rotateL(0), program(0){
+		GameManager() throw(int) : windowManager(WIDTH, HEIGHT, "The Neon Project"), loop(true), state(GAME_MENU), keyPressed(0), vitesseF(0), vitesseL(0), rotateL(0), program(0){
 			try{
 				// Initialize SDL and open a window
 				Init("");
@@ -56,7 +57,7 @@ class GameManager{
 				throw e;
 			}
 		}
-		GameManager(std::string addrs) throw(int) : windowManager(WIDTH, HEIGHT, "The Neon Project"), loop(true), state(GAME_PLAY), keyPressed(0), vitesseF(0), vitesseL(0), rotateL(0),program(0){
+		GameManager(std::string addrs) throw(int) : windowManager(WIDTH, HEIGHT, "The Neon Project"), loop(true), state(GAME_MENU), keyPressed(0), vitesseF(0), vitesseL(0), rotateL(0),program(0){
 			try{
 				// Initialize SDL and open a window
 				Init(addrs);
@@ -66,7 +67,7 @@ class GameManager{
 			}
 		}
 
-		GameManager(std::string addrs,GLuint x, GLuint y, const char * name) throw(int) : windowManager(x, y, name), loop(true), state(GAME_PLAY), keyPressed(0), vitesseF(0), vitesseL(0), rotateL(0),program(0){
+		GameManager(std::string addrs,GLuint x, GLuint y, const char * name) throw(int) : windowManager(x, y, name), loop(true), state(GAME_MENU), keyPressed(0), vitesseF(0), vitesseL(0), rotateL(0),program(0){
 			try{
 				// Initialize SDL and open a window
 				Init(addrs);
@@ -135,6 +136,8 @@ class GameManager{
 		void DrawMenu();
 		//Draws every item of the victory screen
 		void DrawVictoire();
+		
+		void DrawDefaite();
 		
 		//Cleans memory
 		void Clean();

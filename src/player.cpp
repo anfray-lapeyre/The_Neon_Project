@@ -110,13 +110,14 @@ void Player::TurnLeft(){
 	
 	orientation = (orientation+3)%4;
 	isTurning=true;
+	moveEnnemi=true;
 }
 
 
 void Player::TurnRight(){
 	orientation = (orientation+1)%4;
 	isTurning=true;
-	
+	moveEnnemi=true;
 }
 
 void Player::UpdateRotCam(){

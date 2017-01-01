@@ -17,7 +17,28 @@ void Map::ChargerMap_donnees(FILE* F)
 	int numtile,i,j;
 	char buf[CACHE_SIZE];  // un buffer, petite mémoire cache
 	char buf2[CACHE_SIZE];  // un buffer, petite mémoire cache
-	fscanf(F,"#%s",buf); // #Titre
+	int infos[7];
+	fscanf(F,"%d",&this->nbLvls);
+	for(int i=0;i<actual_lvl;i++){
+		fscanf(F,"%s",buf); // #Titre
+		fscanf(F,"%s",buf); // Adresse du niveau
+		fscanf(F,"%d",&numtile); // Adresse du niveau
+		for(int i=0;i<6; i++){ //Textures
+			fscanf(F,"%s",buf); 
+		}
+		
+		fscanf(F,"%d",&this->nbObjets);
+		
+		for(int i=0;i<nbObjets;i++){
+
+			fscanf(F,"%d:%d:%d:%s %d:%d:%s",&infos[0],&infos[1],&infos[2],buf,&infos[3],&infos[4],buf2);
+		}
+		fscanf(F,"%d",&this->nbEnnemis);
+		for(int i=0;i<nbEnnemis;i++){
+			fscanf(F,"%d:%d:%d:%s %d:%d:%d:%d:%s",&infos[0],&infos[1],&infos[2],buf,&infos[3],&infos[4],&infos[5],&infos[6],buf2);
+		}
+	}
+	fscanf(F,"%s",buf); // #Titre
 	strcpy(this->nom,buf);
 	fscanf(F,"%s",buf); // Adresse du niveau
 	strcpy(this->adresseNiveau,buf);
@@ -26,21 +47,16 @@ void Map::ChargerMap_donnees(FILE* F)
 	//player.camera.rotateLeft(-numtile*90);
 	
 	vector<string> addrs;//Adresses texture
-	fscanf(F,"%s",buf); 
-	addrs.push_back(buf);
-	fscanf(F,"%s",buf); 
-	addrs.push_back(buf);
-	fscanf(F,"%s",buf); 
-	addrs.push_back(buf);
-	fscanf(F,"%s",buf); 
-	addrs.push_back(buf);
-	fscanf(F,"%s",buf); 
-	addrs.push_back(buf);
+	for(int i=0;i<6; i++){
+		fscanf(F,"%s",buf); 
+		addrs.push_back(buf);
+	}
+
 	InitTextures(addrs);
 	
 	
 	fscanf(F,"%d",&this->nbObjets);
-	int infos[7];
+
 	
 	for(int i=0;i<nbObjets;i++){
 
@@ -131,6 +147,7 @@ void Map::ChargerMap(const char* level)
 		system("pause");
 		exit(-1);
 	}
+	strcpy(this->adresseData,level);
 	ChargerMap_donnees(F);
 
 	fclose(F);
@@ -144,8 +161,45 @@ void Map::ChargerMap(const char* level)
     F2.close();
 	
 	
-	
 }
+
+/*
+*Recharge les données dans la structure de carte grâce à l'adresse vers un fichier texte
+*/
+void Map::ReloadLevel()
+{
+
+	for(int i=0; i<ennemis.size();i++){
+		ennemis.pop_back();
+	}
+	for(int i=0; i<objets.size();i++){
+		objets.pop_back();
+	}
+	FILE* F;
+	F = fopen(adresseData,"r");
+	if (!F)
+	{
+
+		printf("fichier %s introuvable !! \n",adresseData);
+		SDL_Quit();
+		system("pause");
+		exit(-1);
+	}
+	ChargerMap_donnees(F);
+
+	fclose(F);
+	
+	ifstream F2;
+	F2.open(this->adresseNiveau, std::ios::binary);
+
+	ChargerMap_level(F2);
+	
+	F2.clear();
+    F2.close();
+	
+	player.revive();
+}
+
 
 
 /*
@@ -218,13 +272,12 @@ void Map::DrawMap(float time){
 			}
 		}
 	}
-	
-	glBindTexture(GL_TEXTURE_2D,textures[1]);
-	for(int i=0;i<this->nbtilesY; i++){ //SOL
+		glBindTexture(GL_TEXTURE_2D,textures[5]);
+	for(int i=0;i<this->nbtilesY; i++){ //MUR DU HAUT
 		for(int j=0;j<this->nbtilesX; j++){
-			
-			if(schema[i][j]==1 ||schema[i][j]==3){
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
+			if(schema[i][j]==0){
+				
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning+2, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -232,9 +285,18 @@ void Map::DrawMap(float time){
 				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
 				 
 				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
+				 
 			}
-			if(schema[i][j]==2){
-				MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -9+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
+		}
+	}
+	
+	
+	glBindTexture(GL_TEXTURE_2D,textures[1]);
+	for(int i=0;i<this->nbtilesY; i++){ //SOL
+		for(int j=0;j<this->nbtilesX; j++){
+			
+			if(schema[i][j]==1 ||schema[i][j]==3 ||schema[i][j]==4){
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
@@ -246,7 +308,7 @@ void Map::DrawMap(float time){
 		}
 	}
 	glBindTexture(GL_TEXTURE_2D,textures[4]);
-	for(int i=0;i<this->nbtilesY; i++){ //SOL
+	for(int i=0;i<this->nbtilesY; i++){ //SOL VICTOIRE
 		for(int j=0;j<this->nbtilesX; j++){
 			
 			if(schema[i][j]==5){
@@ -269,14 +331,18 @@ void Map::DrawMap(float time){
 		for(int j=0;j<this->nbtilesX; j++){
 			
 			if(schema[i][j]==2){
+				
 				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
+				 MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+				 // MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
 				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
 				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
 				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
 				 
-				 glDrawArrays(GL_LINES,0,cube.getVertexCount());
+				 // glDrawArrays(GL_LINES,0,cube.getVertexCount());
+				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
 			}
 		}
 	}
@@ -307,14 +373,182 @@ void Map::DrawMap(float time){
 
 
 //Draws the menu
-void DrawMenu(float time, int hover){
+void Map::DrawMenu(float time, int hover){
+	Cube cube;
+	//mat4 MVMatrix;
+	glBindTexture(GL_TEXTURE_2D,texturesMenu[0]);
+	float floating = sin(time)/50.;
+	glUniform1i(LocTexture,0);
+	
+	mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0,0, -4.f)); // Translation
+	MVMatrix = glm::scale(MVMatrix, glm::vec3((3.5)*1.333,3.5,1.));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(-1.f,0.f,0.f));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+	glUniformMatrix4fv(LocMVPMatrix,1,GL_FALSE,glm::value_ptr(getProjMatrix() * MVMatrix));
+	glUniformMatrix4fv(LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 
+	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
+	
+	//mat4 MVMatrix;
+	glBindTexture(GL_TEXTURE_2D,texturesMenu[6]);
+	MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0,1.5, -3.95f)); // Translation
+	MVMatrix = glm::scale(MVMatrix, glm::vec3((2)*1.333,2,1.));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(-1.f,0.f,0.f));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+	glUniformMatrix4fv(LocMVPMatrix,1,GL_FALSE,glm::value_ptr(getProjMatrix() * MVMatrix));
+	glUniformMatrix4fv(LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 
+	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
+	
+	glBindTexture(GL_TEXTURE_2D,texturesMenu[3]);
+	
+
+	
+	MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2.f,-2.f, -3.9f)); // Translation
+	if(hover == 1)
+		MVMatrix = glm::scale(MVMatrix, glm::vec3((1.5+sin(2*M_PI*time)/25.)*1.333,1.5+sin(2*M_PI*time)/25.,1.));
+	else
+		MVMatrix = glm::scale(MVMatrix, glm::vec3((1.4+floating)*1.333,1.4+floating,1.));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(-1.f,0.f,0.f));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+	glUniformMatrix4fv(LocMVPMatrix,1,GL_FALSE,glm::value_ptr(getProjMatrix() * MVMatrix));
+	glUniformMatrix4fv(LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 
+	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
+
+	glBindTexture(GL_TEXTURE_2D,texturesMenu[5]);
+	
+	MVMatrix = glm::translate(glm::mat4(1), glm::vec3(2.f,-1.8f, -3.9f)); // Translation
+	if(hover == 2)
+		MVMatrix = glm::scale(MVMatrix, glm::vec3((1.5+sin(2*M_PI*time)/25.)*1.333,1.5+sin(2*M_PI*time)/25.,1.));
+	else
+		MVMatrix = glm::scale(MVMatrix, glm::vec3((1.4+floating)*1.333,1.4+floating,1.));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(-1.f,0.f,0.f));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+	glUniformMatrix4fv(LocMVPMatrix,1,GL_FALSE,glm::value_ptr(getProjMatrix() * MVMatrix));
+	glUniformMatrix4fv(LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+	
+	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
 	
 }
 //Draws the victory menu
-void DrawVictoire(float time, int hover){
+void Map::DrawVictoire(float time, int hover){
+	Cube cube;
+	//mat4 MVMatrix;
+	glBindTexture(GL_TEXTURE_2D,texturesMenu[0]);
+	float floating = sin(time)/50.;
+	glUniform1i(LocTexture,0);
 	
+	mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0,0, -4.f)); // Translation
+	MVMatrix = glm::scale(MVMatrix, glm::vec3((3.5)*1.333,3.5,1.));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(-1.f,0.f,0.f));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+	glUniformMatrix4fv(LocMVPMatrix,1,GL_FALSE,glm::value_ptr(getProjMatrix() * MVMatrix));
+	glUniformMatrix4fv(LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 
+	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
+	
+	//mat4 MVMatrix;
+	glBindTexture(GL_TEXTURE_2D,texturesMenu[2]);
+	MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0,1.5, -3.95f)); // Translation
+	MVMatrix = glm::scale(MVMatrix, glm::vec3((2)*1.333,2,1.));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(-1.f,0.f,0.f));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+	glUniformMatrix4fv(LocMVPMatrix,1,GL_FALSE,glm::value_ptr(getProjMatrix() * MVMatrix));
+	glUniformMatrix4fv(LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 
+	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
+	
+	glBindTexture(GL_TEXTURE_2D,texturesMenu[4]);
+	
+
+	
+	MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2.f,-2.f, -3.9f)); // Translation
+	if(hover == 1)
+		MVMatrix = glm::scale(MVMatrix, glm::vec3((1.5+sin(2*M_PI*time)/25.)*1.333,1.5+sin(2*M_PI*time)/25.,1.));
+	else
+		MVMatrix = glm::scale(MVMatrix, glm::vec3((1.4+floating)*1.333,1.4+floating,1.));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(-1.f,0.f,0.f));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+	glUniformMatrix4fv(LocMVPMatrix,1,GL_FALSE,glm::value_ptr(getProjMatrix() * MVMatrix));
+	glUniformMatrix4fv(LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 
+	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
+
+	glBindTexture(GL_TEXTURE_2D,texturesMenu[5]);
+	
+	MVMatrix = glm::translate(glm::mat4(1), glm::vec3(2.f,-1.8f, -3.9f)); // Translation
+	if(hover == 2)
+		MVMatrix = glm::scale(MVMatrix, glm::vec3((1.5+sin(2*M_PI*time)/25.)*1.333,1.5+sin(2*M_PI*time)/25.,1.));
+	else
+		MVMatrix = glm::scale(MVMatrix, glm::vec3((1.4+floating)*1.333,1.4+floating,1.));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(-1.f,0.f,0.f));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+	glUniformMatrix4fv(LocMVPMatrix,1,GL_FALSE,glm::value_ptr(getProjMatrix() * MVMatrix));
+	glUniformMatrix4fv(LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+	
+	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
 }
 
+
+//Draws the victory menu
+void Map::DrawDefaite(float time, int hover){
+	Cube cube;
+	//mat4 MVMatrix;
+	glBindTexture(GL_TEXTURE_2D,texturesMenu[0]);
+	float floating = sin(time)/50.;
+	glUniform1i(LocTexture,0);
+	
+	mat4 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0,0, -4.f)); // Translation
+	MVMatrix = glm::scale(MVMatrix, glm::vec3((3.5)*1.333,3.5,1.));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(-1.f,0.f,0.f));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+	glUniformMatrix4fv(LocMVPMatrix,1,GL_FALSE,glm::value_ptr(getProjMatrix() * MVMatrix));
+	glUniformMatrix4fv(LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 
+	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
+	
+	//mat4 MVMatrix;
+	glBindTexture(GL_TEXTURE_2D,texturesMenu[1]);
+	MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0,1.5, -3.95f)); // Translation
+	MVMatrix = glm::scale(MVMatrix, glm::vec3((2)*1.333,2,1.));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(-1.f,0.f,0.f));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+	glUniformMatrix4fv(LocMVPMatrix,1,GL_FALSE,glm::value_ptr(getProjMatrix() * MVMatrix));
+	glUniformMatrix4fv(LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 
+	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
+	
+	glBindTexture(GL_TEXTURE_2D,texturesMenu[4]);
+	
+
+	
+	MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2.f,-2.f, -3.9f)); // Translation
+	if(hover == 1)
+		MVMatrix = glm::scale(MVMatrix, glm::vec3((1.5+sin(2*M_PI*time)/25.)*1.333,1.5+sin(2*M_PI*time)/25.,1.));
+	else
+		MVMatrix = glm::scale(MVMatrix, glm::vec3((1.4+floating)*1.333,1.4+floating,1.));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(-1.f,0.f,0.f));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+	glUniformMatrix4fv(LocMVPMatrix,1,GL_FALSE,glm::value_ptr(getProjMatrix() * MVMatrix));
+	glUniformMatrix4fv(LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 
+	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
+
+	glBindTexture(GL_TEXTURE_2D,texturesMenu[5]);
+	
+	MVMatrix = glm::translate(glm::mat4(1), glm::vec3(2.f,-1.8f, -3.9f)); // Translation
+	if(hover == 2)
+		MVMatrix = glm::scale(MVMatrix, glm::vec3((1.5+sin(2*M_PI*time)/25.)*1.333,1.5+sin(2*M_PI*time)/25.,1.));
+	else
+		MVMatrix = glm::scale(MVMatrix, glm::vec3((1.4+floating)*1.333,1.4+floating,1.));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(-1.f,0.f,0.f));
+	MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+	glUniformMatrix4fv(LocMVPMatrix,1,GL_FALSE,glm::value_ptr(getProjMatrix() * MVMatrix));
+	glUniformMatrix4fv(LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+	
+	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
+}
 
 void Map::LoadMeshes()
 {
@@ -332,7 +566,7 @@ void Map::LoadMeshes()
 }
 
 
-void Map::DrawMeshes(GLint id, float time, Model m){
+void Map::DrawMeshes(GLint id, float time){//, Model m){
 	 // MVMatrix = glm::translate(glm::mat4(1), glm::vec3(0,0,-5*sin(time))); // Translation
 				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
 				// MVMatrix = player.camera.getViewMatrix()*MVMatrix;
@@ -365,21 +599,29 @@ void Map::DrawEnnemis(float time)
 
 void Map::UpdateEnnemis()
 {
-
 	float distanceVect[2];	
 	int direction[2];
 	float distanceNorme;
 
+
 	for(vector<Ennemi>::iterator it = ennemis.begin() ; it!=ennemis.end();it++)
 	{
 		//calcul vecteur distance, norme distance, direction vecteur
-
+		
 		distanceVect[0] = abs(it->x - player.x);
 		distanceVect[1]= abs(it->y - player.y);
-
 		
-		direction[0] = -(it->x - player.x)/distanceVect[0]; //pour voir la direction du vecteur ennemi-player afin que l'ennemi parte pas dans l'autre sens
-		direction[1] = (it->y - player.y)/distanceVect[1];
+		if((it->x - player.x) != 0)
+		{
+			direction[0] = -(it->x - player.x)/distanceVect[0]; //pour voir la direction du vecteur ennemi-player afin que l'ennemi parte pas dans l'autre sens
+			direction[1] = -(it->y - player.y)/distanceVect[1];
+		}
+		
+		else
+		{
+			direction[0] = 0;
+			direction[1] = 0;
+		}
 
 		//cout << direction[0] << "," << direction[1] << endl;
 
@@ -387,58 +629,81 @@ void Map::UpdateEnnemis()
 		
 		if(it->isAlerted)
 		{
-			// cout << it->x + direction[0] << endl;
-			//cout << it->x << "," << it->y << endl;
-			if((distanceNorme<=5) && (distanceNorme >1))
+			//cout << distanceVect[0] + distanceVect[1] << endl;
+			if((distanceNorme<=6) && (distanceNorme > 0.5))
 			{
-				if(distanceVect[0] >= distanceVect[1])
-				{
-					if(schema[it->x+direction[0]][it->y] != 0)
-					{
-						it->x += direction[0];
-
-					}
-
-					else
-					{
-						it->y += direction[1];
-					}
+				if(distanceVect[0] + distanceVect[1] == 1){
+					player.pv = player.pv - it->attaque;
 				}
 
-				else if(distanceVect[0] < distanceVect[1])
+				else
 				{
-					if(schema[it->x][it->y+direction[1]] != 0)
+					if(distanceVect[0] >= distanceVect[1])
 					{
-						it->y += direction[1];
-						cout << direction[1] << endl;
+						if(schema[it->x+direction[0]][it->y] != 0)
+						{
+							it->x += direction[0];
+
+						}
+
+						else
+						{
+							it->y += direction[1];
+						}
 					}
 
-					else
+					else if(distanceVect[0] < distanceVect[1])
 					{
-						it->x += direction[0];
+						if(schema[it->x][it->y+direction[1]] != 0)
+						{
+							it->y += direction[1];
+						}
+
+						else
+						{
+							it->x += direction[0];
+						}
 					}
 				}
 			//cout << it->x << "," << it->y << endl;
 			}
 
-			else {
+			else 
+			{
 				it->isAlerted = false;
 			}
 
 		}
 		else
 		{
-			if(distanceNorme<=3)
+			if(distanceNorme<=3.5)
 			{
 				it->isAlerted=true;
 			}
 		}
-		cout << it->pv<<endl;
 	}
 
 }
 
+void Map::AttackEnnemis()
+{
+	
+	for(vector<Ennemi>::iterator it = ennemis.begin() ; it!=ennemis.end();it++)
+	{
+		if((player.x+glm::sin(glm::radians(player.orientation*90.f+180.f))  == it->x) && (player.y+glm::cos(glm::radians(player.orientation*90.f+180.f))  == it->y))
+		{
+			it->pv = it->pv - player.attaque;
+			
+		}
 
+		if(it->pv <= 0) 
+		{
+			ennemis.erase(it);
+			if(ennemis.size()==0)
+				break;
+		}
+	}
+}
 
 void Map::DrawObjets(float time)
 {
@@ -502,6 +767,7 @@ void Map::InitTextures(vector<string> addr)
 	unique_ptr<Image> imgDoor = loadImage(addr[2]);
 	unique_ptr<Image> imgEau = loadImage(addr[3]);
 	unique_ptr<Image> imgVictoire = loadImage(addr[4]);
+	unique_ptr<Image> imgMur2 = loadImage(addr[5]);
 
 	
 	glGenTextures(1,&this->textures[0]);
@@ -538,6 +804,84 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D,0);
+	
+	glGenTextures(1,&this->textures[5]);
+    glBindTexture(GL_TEXTURE_2D,this->textures[5]);
+    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgMur2->getWidth() ,imgMur2->getHeight() ,0, GL_RGBA,GL_FLOAT,imgMur2->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D,0);
+	
+	InitTexturesMenu();
+	 
+}
+
+
+void Map::InitTexturesMenu()
+{
+	
+	
+
+	glUniform1i(LocTexture,0);
+	
+	unique_ptr<Image> imgPave = loadImage("assets/textures/menu/menufond3.jpg");
+	unique_ptr<Image> imgBrique = loadImage("assets/textures/menu/lose.jpg");
+	unique_ptr<Image> imgDoor = loadImage("assets/textures/menu/win.jpg");
+	unique_ptr<Image> imgEau = loadImage("assets/textures/menu/play.jpg");
+	unique_ptr<Image> imgVictoire = loadImage("assets/textures/menu/replay.jpg");
+	unique_ptr<Image> imgQuit = loadImage("assets/textures/menu/quit.jpg");
+	unique_ptr<Image> imgMenu = loadImage("assets/textures/menu/menu.jpg");
+
+	
+	glGenTextures(1,&this->texturesMenu[0]);
+    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[0]);
+    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgPave->getWidth() ,imgPave->getHeight() ,0, GL_RGBA,GL_FLOAT,imgPave->getPixels());
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	 
+    glGenTextures(1,&this->texturesMenu[1]);
+    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[1]);
+    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgBrique->getWidth() ,imgBrique->getHeight() ,0, GL_RGBA,GL_FLOAT,imgBrique->getPixels());
+	 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	 
+	glGenTextures(1,&this->texturesMenu[2]);
+    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[2]);
+    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgDoor->getWidth() ,imgDoor->getHeight() ,0, GL_RGBA,GL_FLOAT,imgDoor->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+	glGenTextures(1,&this->texturesMenu[3]);
+    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[3]);
+    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgEau->getWidth() ,imgEau->getHeight() ,0, GL_RGBA,GL_FLOAT,imgEau->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+	glGenTextures(1,&this->texturesMenu[4]);
+    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[4]);
+    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgVictoire->getWidth() ,imgVictoire->getHeight() ,0, GL_RGBA,GL_FLOAT,imgVictoire->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+	glGenTextures(1,&this->texturesMenu[5]);
+    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[5]);
+    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgQuit->getWidth() ,imgQuit->getHeight() ,0, GL_RGBA,GL_FLOAT,imgQuit->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+	glGenTextures(1,&this->texturesMenu[6]);
+    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[6]);
+    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgMenu->getWidth() ,imgMenu->getHeight() ,0, GL_RGBA,GL_FLOAT,imgMenu->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D,0);
 	 
 }
 
@@ -547,6 +891,16 @@ void Map::cleanTextures()
     glDeleteTextures(1,&this->textures[1]);
 	glDeleteTextures(1,&this->textures[2]);
 	glDeleteTextures(1,&this->textures[3]);
+	glDeleteTextures(1,&this->textures[4]);
+	glDeleteTextures(1,&this->textures[5]);
+	
+	glDeleteTextures(1,&this->texturesMenu[0]);
+    glDeleteTextures(1,&this->texturesMenu[1]);
+	glDeleteTextures(1,&this->texturesMenu[2]);
+	glDeleteTextures(1,&this->texturesMenu[3]);
+	glDeleteTextures(1,&this->texturesMenu[4]);
+	glDeleteTextures(1,&this->texturesMenu[5]);
+	glDeleteTextures(1,&this->texturesMenu[6]);
 }
 
 
@@ -570,154 +924,155 @@ void Map::UpdateMove(int vitesseF, int vitesseL, int rotateF)
 	if(!player.isInMovement &&!player.isTurning ){
 		if(vitesseF != 0 || vitesseL != 0){
 			player.isInMovement=true;
+			player.moveEnnemi=true;
 		}
 		switch(player.orientation){
 			case 2:
 				if(vitesseF>0 && (schema[player.x][player.y-1]!=0 && AreDoorUnlocked(player.x,player.y-1) )){
-					if(player.drowning<0.4 || schema[player.x][player.y-1]==2){
+					if(player.drowning<0.2 || schema[player.x][player.y-1]==2){
 						player.y--;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 				}
 				else if(vitesseF<0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
-					if(player.drowning<0.4 || schema[player.x][player.y+1]==2){
+					if(player.drowning<0.2 || schema[player.x][player.y+1]==2){
 						player.y++;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 				}
 				if(vitesseL>0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
-					if(player.drowning<0.4 || schema[player.x+1][player.y]==2){
+					if(player.drowning<0.2 || schema[player.x+1][player.y]==2){
 						player.x++;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 				}
 					
 				else if(vitesseL<0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
-					if(player.drowning<0.4 || schema[player.x-1][player.y]==2){
+					if(player.drowning<0.2 || schema[player.x-1][player.y]==2){
 						player.x--;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 				}
 					
 			break;
 			case 3:
 				if(vitesseF>0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
-					if(player.drowning<0.4 || schema[player.x-1][player.y]==2){
+					if(player.drowning<0.2|| schema[player.x-1][player.y]==2){
 						player.x--;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 					
 				}
 				else if(vitesseF<0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
-					if(player.drowning<0.4 || schema[player.x+1][player.y]==2){
+					if(player.drowning<0.2 || schema[player.x+1][player.y]==2){
 						player.x++;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 					
 				}
 				if(vitesseL>0 && schema[player.x][player.y-1]!=0&& AreDoorUnlocked(player.x,player.y-1)){
-					if(player.drowning<0.4 || schema[player.x][player.y-1]==2){
+					if(player.drowning<0.2 || schema[player.x][player.y-1]==2){
 						player.y--;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 					
 				}
 				else if(vitesseL<0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
-					if(player.drowning<0.4 || schema[player.x][player.y+1]==2){
+					if(player.drowning<0.2 || schema[player.x][player.y+1]==2){
 						player.y++;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 					
 				}
 			break;
 			case 0:
 				if(vitesseF>0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
-					if(player.drowning<0.4 || schema[player.x][player.y+1]==2){
+					if(player.drowning<0.2 || schema[player.x][player.y+1]==2){
 						player.y++;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 					
 				}
 				else if(vitesseF<0 && schema[player.x][player.y-1]!=0&& AreDoorUnlocked(player.x,player.y-1)){
-					if(player.drowning<0.4 || schema[player.x][player.y-1]==2){
+					if(player.drowning<0.2 || schema[player.x][player.y-1]==2){
 						player.y--;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 					
 				}
 				if(vitesseL>0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
-					if(player.drowning<0.4 || schema[player.x-1][player.y]==2){
+					if(player.drowning<0.2 || schema[player.x-1][player.y]==2){
 						player.x--;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 					
 				}
 				else if(vitesseL<0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
-					if(player.drowning<0.4 || schema[player.x+1][player.y]==2){
+					if(player.drowning<0.2 || schema[player.x+1][player.y]==2){
 						player.x++;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 					
 			}
 			break;
 			case 1:
 				if(vitesseF>0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
-					if(player.drowning<0.4 || schema[player.x+1][player.y]==2){
+					if(player.drowning<0.2 || schema[player.x+1][player.y]==2){
 						player.x++;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 					
 				}
 				else if(vitesseF<0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
-					if(player.drowning<0.4 || schema[player.x-1][player.y]==2){
+					if(player.drowning<0.2 || schema[player.x-1][player.y]==2){
 						player.x--;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 					
 				}
 				if(vitesseL>0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
-					if(player.drowning<0.4 || schema[player.x][player.y+1]==2){
+					if(player.drowning<0.2 || schema[player.x][player.y+1]==2){
 						player.y++;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 					
 				}
 				else if(vitesseL<0 && schema[player.x][player.y-1]!=0&& AreDoorUnlocked(player.x,player.y-1)){
-					if(player.drowning<0.4 || schema[player.x][player.y-1]==2){
+					if(player.drowning<0.2 || schema[player.x][player.y-1]==2){
 						player.y--;
 					}
 					else{
-						player.drowning-=0.5;
+						player.drowning-=0.2;
 					}
 					
 				}
@@ -727,7 +1082,7 @@ void Map::UpdateMove(int vitesseF, int vitesseL, int rotateF)
 			
 		}
 	}
-	if(schema[player.x][player.y]==2 && player.drowning < 2.5f){
+	if(schema[player.x][player.y]==2 && player.drowning < .8f){
 		player.drown();
 	}
 	else if(schema[player.x][player.y]!=2){

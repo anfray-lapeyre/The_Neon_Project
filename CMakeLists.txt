@@ -12,8 +12,24 @@ INCLUDE_DIRECTORIES(glimac/include)
 
 add_subdirectory(glimac)
 
+
+#FIND_LIBRARY(ASSIMP_LIB assimp PATHS third-party/assimp/lib)
+#message(${ASSIMP_LIB})
+
 aux_source_directory(./src SRC_LIST) #add all source file from current directory in the SRC_LIST variable
-set(LIB_LIST glimac -lmingw32 -lSDLmain -lSDL assimp SDL_mixer glew32s opengl32 glimac glu32 freeglut ) #add the libraries options in the LIB_LIST variable
+
+if (WIN32)
+    #do something
+	#set(LIB_LIST  glimac SDLmain SDL ${ASSIMP_LIB} SDL_mixer glew32s opengl32 glu32 freeglut ) #add the libraries options in the LIB_LIST variable
+	set(LIB_LIST  glimac SDLmain SDL SDL_mixer glew32s opengl32 glu32 freeglut ) #add the libraries options in the LIB_LIST variable
+endif (WIN32)
+
+if (UNIX)
+    #do something
+	# set(LIB_LIST glimac SDL SDL_mixer ${ASSIMP_LIB} GLEW GL GLU glut) #add the libraries options in the LIB_LIST variable
+	set(LIB_LIST glimac SDL SDL_mixer GLEW GL GLU glut) #add the libraries options in the LIB_LIST variable
+endif (UNIX)
+
 
 add_executable(${PROJECT_NAME} ${SRC_LIST}) #set an executable from the file of SRC_LIST
 target_link_libraries(${PROJECT_NAME} ${LIB_LIST}) #link the libraries with the executable

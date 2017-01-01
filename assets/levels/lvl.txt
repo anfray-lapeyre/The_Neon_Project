@@ -1,12 +1,27 @@
+2
 #Level1
 assets/levels/lvl.ppm
 0
 assets/textures/mur.jpg
 assets/textures/sol.jpg
-assets/textures/mer.jpg
+assets/textures/eau3.jpg
 assets/textures/porte.jpg
 assets/textures/victoire.jpg
+assets/textures/mur7.jpg
 1
 1:5:12:PineApple 0:120:assets/models/bob.obj
 1
-2:10:13:Graou 2:30:15:20:assets/models/graou.obj
+2:10:13:Graou 2:0:10:20:assets/models/graou.obj
+#Level2
+assets/levels/test.ppm
+0
+assets/textures/mur.jpg
+assets/textures/sol.jpg
+assets/textures/eau3.jpg
+assets/textures/porte.jpg
+assets/textures/victoire.jpg
+assets/textures/mur7.jpg
+1
+1:26:53:PineApple 0:120:assets/models/bob.obj
+1
+2:10:13:Graou 2:0:10:20:assets/models/graou.obj

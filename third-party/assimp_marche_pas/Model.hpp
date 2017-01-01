@@ -17,15 +17,15 @@
 #include <GL/glu.h>
 
 /* assimp include files. These three are usually needed. */
-#include <assimp/Importer.hpp>
-#include <assimp/cimport.h>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+// #include <assimp/types.h>
+// #include "assimp/vector2.h"
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing flags
 
 #include <glimac/FilePath.hpp>
 #include <glimac/common.hpp>
 #include <glimac/glm.hpp>
-#include <glimac/OBJMesh.hpp>
 #include <glimac/Image.hpp>
 using namespace std;
 

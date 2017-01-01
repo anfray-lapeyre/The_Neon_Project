@@ -97,6 +97,7 @@ void GameManager::handleEvent(){
                 if(SDL_BUTTON(SDL_BUTTON_LEFT))
                     // Mix_PlayChannel(1,musicBeep,1);//////////////////////////////////// A FAIRE
 					currentMap.PlayFire();
+					currentMap.AttackEnnemis();
             }
 
 			else if (e.type == SDL_KEYDOWN){
@@ -133,6 +134,7 @@ void GameManager::handleEvent(){
 				case SDLK_e:
 					if(!keyState[SDLK_q])
 					rotateL = -1;
+						
 					break;	
 				case SDLK_ESCAPE:
 					loop=false;
@@ -153,11 +155,11 @@ void GameManager::handleEventMenu(){
             loop=false; // Leave the loop after this iteration
         }
 		else if(e.type == SDL_MOUSEMOTION){
-			if(e.motion.x > 0 && e.motion.x < 275 && e.motion.y>380 && e.motion.y<570){
+			if(e.motion.x > 90 && e.motion.x < 400 && e.motion.y>300 && e.motion.y<550){
 				
 				lives=1;
 			}
-			else if(e.motion.x > 318 && e.motion.x < 600 && e.motion.y>380 && e.motion.y<570){
+			else if(e.motion.x > 400 && e.motion.x < 710 && e.motion.y>300 && e.motion.y<550){
 				lives =2;
 			}else{
 				lives=0;
@@ -167,10 +169,12 @@ void GameManager::handleEventMenu(){
 				if(lives==1){
 					state=GAME_PLAY;
 					cout << "PLAY" << endl;
+					currentMap.ReloadLevel();
 					lives=3;
 				}
 				else if(lives == 2)
 					loop=false;
+
 		}
 		else if(e.type == SDL_KEYUP) {
 			Uint8* keyState = SDL_GetKeyState(nullptr);
@@ -198,15 +202,44 @@ void GameManager::Update(){
         {
             currentMap.PlayLoot();
         }
-        currentMap.UpdateEnnemis();
 		currentMap.UpdateMove(vitesseF,vitesseL,rotateL);
 		
 		rotateL=0;
 		vitesseL=0;
 		vitesseF=0;
+		if(currentMap.player.moveEnnemi)
+        {
+            currentMap.UpdateEnnemis();
+            currentMap.turn++;
+            currentMap.player.moveEnnemi=false;
+            //cout << "test" << endl;
+        }
+		
+		 if(windowManager.getTime()/2.f > currentMap.turn)
+        {
+            currentMap.turn++;
+            currentMap.UpdateEnnemis();
+        }
+		cout << currentMap.player.pv << endl;
+		
+		if(currentMap.player.isDead()){
+			if(lives>0){
+				
+				lives--;
+				currentMap.ReloadLevel();
+				
+			}
+			else{
+				this->state=GAME_LOSE; // Game_Win mais les vies sont négatives, donc l'écran affiche "perdu"
+			}
+		}
 		
 		if(currentMap.isFinished()){
-			this->state=GAME_WIN;
+			currentMap.actual_lvl++;
+			if(currentMap.actual_lvl >= currentMap.nbLvls)
+				this->state=GAME_WIN;
+			else
+				currentMap.ReloadLevel();
 		}
 
 }
@@ -237,6 +270,7 @@ void GameManager::Draw(){
 	glClearColor(0.03529411764705882352941176470588f,0.0039215686274509803921568627451f,0.08627450980392156862745098039216f,1.f);
 	
     glBindVertexArray(vao);
+	
 	currentMap.DrawMap(windowManager.getTime());
 	
 
@@ -258,7 +292,7 @@ void GameManager::DrawMenu(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBindVertexArray(vao);
 
-	// currentMap.DrawMenu(windowManager.getTime(),lives);
+	currentMap.DrawMenu(windowManager.getTime(),lives);
 		
 	//We unbind any texture, just in case
 	glBindTexture(GL_TEXTURE_2D,0);
@@ -274,10 +308,22 @@ void GameManager::DrawVictoire(){
     *********************************/
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBindVertexArray(vao);
-	// if(lives>0)
-	// currentMap.DrawVictoire(windowManager.getTime(),lives);
-	// else
-	// currentMap.DrawDefaite(windowManager.getTime(),lives);
+	currentMap.DrawVictoire(windowManager.getTime(),lives);
+	//We unbind any texture, just in case
+	glBindTexture(GL_TEXTURE_2D,0);
+    glBindVertexArray(0);
+		
+    // Update the display
+    windowManager.swapBuffers();
+}
+
+void GameManager::DrawDefaite(){
+	/*********************************
+    * HERE SHOULD COME THE RENDERING CODE
+    *********************************/
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBindVertexArray(vao);
+	currentMap.DrawDefaite(windowManager.getTime(),lives);
 	//We unbind any texture, just in case
 	glBindTexture(GL_TEXTURE_2D,0);
     glBindVertexArray(0);

@@ -39,12 +39,11 @@
 #include <glimac/FilePath.hpp>
 #include <glimac/glm.hpp>
 #include <glimac/Image.hpp>
-#include <glimac/OBJMesh.hpp>
 #include <glimac/Plane.hpp>
 #include <glimac/Cube.hpp>
 #include <glimac/FreeflyCamera.hpp>
 #include <glimac/SDLWindowManager.hpp>
-#include <glimac/Model.hpp>
+//#include <glimac/Model.hpp>
 
 
 #define aisgl_min(x,y) (x<y?x:y)

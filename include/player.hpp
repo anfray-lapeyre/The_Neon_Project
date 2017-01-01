@@ -16,9 +16,10 @@ class Player
 		bool isInMovement;
 		bool isTurning;
 		float drowning;
+		bool moveEnnemi = false;
 
 		
-		Player(int x=0, int y=0, int attaque=0, int defense=0, int pv=0,int gold=0){
+		Player(int x=0, int y=0, int attaque=1, int defense=0, int pv=20,int gold=0){
 			this->x=x;
 			this->y=y;
 			this->attaque=attaque;
@@ -30,6 +31,7 @@ class Player
 			camera.m_Position = glm::vec3(this->x*2,-5,this->y*2);
 			isInMovement=false;
 			isTurning=false;
+			this->moveEnnemi = false;
 		};
 		
 		Player( const Player& other ){
@@ -45,6 +47,7 @@ class Player
 			this->isInMovement=other.isInMovement;
 			this->isTurning=other.isTurning;
 			this->drowning=other.drowning;
+			this->moveEnnemi = other.moveEnnemi;
 		};
 		
 		~Player(){	};
@@ -73,9 +76,9 @@ class Player
 		void TurnLeft();
 		void TurnRight();
 		void UpdateRotCam();
-		void drown(){drowning+=0.001f;
-			
-		}
+		void drown(){drowning+=0.001f;}
+		bool isDead(){return pv<=0;}
+		void revive(){pv=20;}
 	private : 
 		
 	
