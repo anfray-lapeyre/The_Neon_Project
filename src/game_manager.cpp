@@ -208,13 +208,13 @@ void GameManager::Update(){
 		vitesseL=0;
 		vitesseF=0;
 
-		currentMap.turn++;
-		currentMap.UpdateEnnemis(currentMap.player.moveEnnemi || windowManager.getTime()/2.f > currentMap.turn);
-		currentMap.player.moveEnnemi=false;
+		currentMap.addTurn();
+		currentMap.UpdateEnnemis(currentMap.moveEnnemi() || windowManager.getTime()/2.f > currentMap.getTurn());
+		currentMap.stopMoving();
 		
-		cout << currentMap.player.pv << endl;
+		//cout << currentMap.getPV() << endl;
 		
-		if(currentMap.player.isDead()){
+		if(currentMap.isDead()){
 			if(lives>0){
 				
 				lives--;
@@ -227,8 +227,8 @@ void GameManager::Update(){
 		}
 		
 		if(currentMap.isFinished()){
-			currentMap.actual_lvl++;
-			if(currentMap.actual_lvl >= currentMap.nbLvls)
+			currentMap.toNextLvl();
+			if(currentMap.getActualLvl() >= currentMap.getNbLvls())
 				this->state=GAME_WIN;
 			else
 				currentMap.ReloadLevel();
@@ -259,7 +259,7 @@ void GameManager::Draw(){
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	program.use();
-	glClearColor(0.03529411764705882352941176470588f+(sin(glm::radians(90.f-currentMap.player.pv)*windowManager.getTime())*sin(glm::radians((90.f-currentMap.player.pv)*windowManager.getTime())))*(90.1f-currentMap.player.pv)/280.f,0.0039215686274509803921568627451f,0.08627450980392156862745098039216f,1.f);
+	glClearColor(0.03529411764705882352941176470588f+(sin(glm::radians(20.f-currentMap.getPV())*windowManager.getTime())*sin(glm::radians((20.f-currentMap.getPV())*windowManager.getTime())))*(20.1f-currentMap.getPV())/280.f,0.0039215686274509803921568627451f,0.08627450980392156862745098039216f,1.f);
 	
     glBindVertexArray(vao);
 	

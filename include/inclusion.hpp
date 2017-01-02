@@ -49,7 +49,7 @@
 #define aisgl_min(x,y) (x<y?x:y)
 #define aisgl_max(x,y) (y>x?y:x)
 
-//The ProjMatrix is constant so we make this function to get it everywhere
+//On ne l'utilise plus, mais la fonction permet d'avoir une projMatrix sans la stocker
 static const glm::mat4 getProjMatrix(){return glm::perspective(glm::radians(70.f), WIDTH/HEIGHT,0.1f,100.f );}
 
 #endif

@@ -11,14 +11,16 @@ class Player
 	public :
 		int x,y;
 		FreeflyCamera camera;
-		int attaque,defense, pv,gold;
-		int orientation;
-		bool isInMovement;
-		bool isTurning;
-		float drowning;
-		bool moveEnnemi = false;
+		int attaque,defense, pv,gold; //Stats du joueur
+		int orientation; //Valeur d'oriention de 0 à 3
+		bool isInMovement;//Si vrai, l'animation est en cours, pas d'action possible
+		bool isTurning; //Si vrai, l'animation est en cours, pas d'action possible
+		float drowning; //Valeur permettant de faire couler le personnage
+		bool moveEnnemi = false; //Dès qu'il devient vrai, l'ennemi a le droit a une action
 
-		
+		/**********************************************************************************************************************************
+															CONSTRUCTEURS
+		**********************************************************************************************************************************/
 		Player(int x=0, int y=0, int attaque=1, int defense=0, int pv=20,int gold=0){
 			this->x=x;
 			this->y=y;
@@ -49,9 +51,15 @@ class Player
 			this->drowning=other.drowning;
 			this->moveEnnemi = other.moveEnnemi;
 		};
-		
+		/**********************************************************************************************************************************
+															DESTRUCTEUR
+		**********************************************************************************************************************************/
 		~Player(){	};
 		
+		
+		/**********************************************************************************************************************************
+															ACCESSEURS
+		**********************************************************************************************************************************/
 		void addLoot(Objet loot){
 			if(loot.type==0)
 				gold+=loot.valeur;
@@ -70,17 +78,22 @@ class Player
 		
 		void changePosition(int x, int y);
 		void Afficher();
-		
-		void UpdateMove(int vitesseF, int vitesseL, int rotateF);
-		
+		bool isDead(){return pv<=0;}
 		void TurnLeft();
 		void TurnRight();
-		void UpdateRotCam();
-		void drown(){drowning+=0.001f;}
-		bool isDead(){return pv<=0;}
-		void revive(){pv=20;}
-	private : 
 		
+		/**********************************************************************************************************************************
+															AUTRES
+		**********************************************************************************************************************************/
+		//S'occupe de mettre à jour la position de la caméra du joueur
+		void UpdateMove(int vitesseF, int vitesseL, int rotateF);
+		//S'occupe de mettre à jour la rotation de la caméra du joueur
+		void UpdateRotCam();
+		//Fais couler le joueur
+		void drown(){drowning+=0.001f;}
+		//Restaure les pvs du joueur
+		void revive(){pv=20;}
+
 	
 };
 

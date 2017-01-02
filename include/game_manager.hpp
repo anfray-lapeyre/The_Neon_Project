@@ -136,7 +136,7 @@ class GameManager{
 		void DrawMenu();
 		//Draws every item of the victory screen
 		void DrawVictoire();
-		
+		//Draws every item of the defeat screen
 		void DrawDefaite();
 		
 		//Cleans memory

@@ -7,7 +7,9 @@
 using namespace std;
 using namespace glm;
 using namespace glimac;
-
+/********************************************************************************************************************************************
+																SOUS-FONCTIONS
+	*************************************************************************************************************************************************/	
 /*
 *Charge les données sur le tileset et les stocke dans props
 *Cette fonction est appelée en première
@@ -130,6 +132,317 @@ void Map::ChargerMap_level(ifstream& F)
 	}
 }
 
+
+void Map::DrawMur(float time, float life){
+	Cube cube;
+	//mat4 MVMatrix;
+	glBindTexture(GL_TEXTURE_2D,textures[0]);
+	glUniform1i(LocTexture,0); 
+	for(int i=0;i<this->nbtilesY; i++){ //MUR
+		for(int j=0;j<this->nbtilesX; j++){
+			if(schema[i][j]==0){
+				
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
+				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
+				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
+				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
+				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
+				 
+				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
+				 
+				  MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
+				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
+				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
+				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
+				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
+				 
+				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
+			}
+		}
+	}
+	
+	
+	glBindTexture(GL_TEXTURE_2D,textures[5]);
+	for(int i=0;i<this->nbtilesY; i++){ //MUR DU HAUT
+		for(int j=0;j<this->nbtilesX; j++){
+			if(schema[i][j]==0){
+				
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning+2-life/100.f, -2*j)); // Translation
+				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
+				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
+				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
+				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
+				 
+				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
+				 
+			}
+		}
+	}
+}
+
+
+void Map::DrawEau(float time, float life){
+	Cube cube;
+	
+	glBindTexture(GL_TEXTURE_2D,textures[2]);
+	for(int i=0;i<this->nbtilesY; i++){ //EAU
+		for(int j=0;j<this->nbtilesX; j++){
+			
+			if(schema[i][j]==2){
+				
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
+				 MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
+				 // MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
+				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
+				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
+				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
+				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
+				 
+				 // glDrawArrays(GL_LINES,0,cube.getVertexCount());
+				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
+			}
+		}
+	}
+}
+
+
+void Map::DrawSol(float time, float life){
+	Cube cube;
+	glBindTexture(GL_TEXTURE_2D,textures[1]);
+	for(int i=0;i<this->nbtilesY; i++){ //SOL
+		for(int j=0;j<this->nbtilesX; j++){
+			
+			if(schema[i][j]==1 ||schema[i][j]==3 ||schema[i][j]==4){
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
+				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
+				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
+				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
+				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
+				 
+				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
+			}
+		}
+	}
+}
+
+
+void Map::DrawAutre(float time, float life){
+	Cube cube;
+	glBindTexture(GL_TEXTURE_2D,textures[4]);
+	for(int i=0;i<this->nbtilesY; i++){ //SOL VICTOIRE
+		for(int j=0;j<this->nbtilesX; j++){
+			
+			if(schema[i][j]==5){
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
+				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
+				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
+				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
+				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
+				 
+				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
+			}
+
+		}
+	}
+	
+	glBindTexture(GL_TEXTURE_2D,textures[3]);
+	for(int i=0;i<this->nbtilesY; i++){  //PORTE ?
+		for(int j=0;j<this->nbtilesX; j++){
+			
+			if(schema[i][j]==3){
+				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-(player.gold/100)*2, -2*j)); // Translation
+				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
+				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
+				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
+				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
+				 
+				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
+			}
+		}
+	}
+}
+
+
+
+//Dessine la carte en 3D 
+void Map::DrawMap(float time){
+	float life = (sin(glm::radians(20.f-player.pv)*time)*sin(glm::radians((20.f-player.pv)*time)))*(20.1f-player.pv)/5.f;
+	ProjMatrix = glm::perspective(glm::radians(70.f+sin(time)*sin(time)+life), 800.f/600.f,0.1f,100.f );
+	
+	DrawMur(time,life);
+	DrawEau(time,life);
+	DrawSol(time,life);
+	DrawAutre(time,life);
+	
+	DrawEnnemis(time);
+	DrawObjets(time);
+	
+}
+
+
+void Map::DrawEnnemis(float time)
+{
+	Cube cube;
+	//mat4 MVMatrix;
+	glBindTexture(GL_TEXTURE_2D,textures[0]);
+	glUniform1i(LocTexture,0); 
+	for(auto& ennemi : ennemis){
+		//On s'occupe d'abord des objets
+		MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*ennemi.realX-sin(time*10)/50., -5.25-sin(time*10)/50.+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*ennemi.realY+sin(time*13)/50.)); // Translation
+		MVMatrix = glm::scale(MVMatrix,glm::vec3(0.5,0.7+sin(time*10)/100.,0.2)); // Translation
+		// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
+		MVMatrix = player.camera.getViewMatrix()*MVMatrix;
+		glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
+		glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+		glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
+		// ennemi.modele3D.Draw();
+		glDrawArrays(GL_LINES,0,cube.getVertexCount());
+	}
+}
+
+void Map::DrawObjets(float time)
+{
+	Cube cube;
+	//mat4 MVMatrix;
+	glBindTexture(GL_TEXTURE_2D,textures[0]);
+	glUniform1i(LocTexture,0); 
+	for(auto& objet : objets){
+		/*if(objet.id >= itemMesh.size()){
+			//Si on voit que l'id est plus grand que la taille du tableau
+			//On sait que l'id ne fait pas partie de celui-ci
+			//Donc on le charge ! 
+		}*/
+		MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*objet.x, -5.5+cos(time)/20.+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*objet.y)); // Translation
+		MVMatrix = glm::rotate(MVMatrix, time/5.f, glm::vec3(0.f,1.f,0.f));
+		MVMatrix = glm::scale(MVMatrix,glm::vec3(0.2+sin(time+1)/100.,0.2+sin(time+1)/100.,0.2+sin(time+1)/100.)); // Translation
+		// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
+		MVMatrix = player.camera.getViewMatrix()*MVMatrix;
+		glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
+		glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
+		glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
+				 
+		glDrawArrays(GL_TRIANGLES,0,(cube.getVertexCount()/6)*5);
+	}
+	
+}
+
+
+
+
+void Map::InitTexturesMenu()
+{
+	
+	
+
+	glUniform1i(LocTexture,0);
+	
+	unique_ptr<Image> img[7];
+	img[0]	= loadImage("assets/textures/menu/menufond3.jpg");
+	img[1] = loadImage("assets/textures/menu/lose.jpg");
+	img[2] = loadImage("assets/textures/menu/win.jpg");
+	img[3] = loadImage("assets/textures/menu/play.jpg");
+	img[4] = loadImage("assets/textures/menu/replay.jpg");
+	img[5] = loadImage("assets/textures/menu/quit.jpg");
+	img[6] = loadImage("assets/textures/menu/menu.jpg");
+
+	for(int i=0;i<7;i++){
+		glGenTextures(1,&this->texturesMenu[i]);
+		glBindTexture(GL_TEXTURE_2D,this->texturesMenu[i]);
+		glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,img[i]->getWidth() ,img[i]->getHeight() ,0, GL_RGBA,GL_FLOAT,img[i]->getPixels());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	
+
+    glBindTexture(GL_TEXTURE_2D,0);
+	 
+}
+
+
+/********************************************************************************************************************************************
+																FONCTIONS AUTRES
+	*************************************************************************************************************************************************/	
+
+
+/*****************************************************************
+							INITIALISATION
+	****************************************************************/	
+
+
+
+
+//Initialize de vbos and vaos
+void Map::InitShaderDatas(GLuint vao, GLuint vbo){
+	 Cube cube;
+	 
+     glBindBuffer(GL_ARRAY_BUFFER,vbo);
+
+     glBufferData(GL_ARRAY_BUFFER, cube.getVertexCount()*sizeof(ShapeVertex), cube.getDataPointer(), GL_STATIC_DRAW);
+
+     glBindBuffer(GL_ARRAY_BUFFER,0);
+	 
+	 
+
+     
+     glBindVertexArray(vao);
+
+
+     glEnableVertexAttribArray(VERTEX_ATTRIB_POSITION);
+     glEnableVertexAttribArray(VERTEX_ATTRIB_NORMALS);
+     glEnableVertexAttribArray(VERTEX_ATTRIB_TEXTURE);
+
+     glBindBuffer(GL_ARRAY_BUFFER,vbo);
+
+     glVertexAttribPointer(VERTEX_ATTRIB_POSITION,3,GL_FLOAT,GL_FALSE,sizeof(ShapeVertex), (const GLvoid *) (offsetof(ShapeVertex,position)));
+     glVertexAttribPointer(VERTEX_ATTRIB_NORMALS,3,GL_FLOAT,GL_FALSE,sizeof(ShapeVertex), (const GLvoid *) (offsetof(ShapeVertex,normal)));
+     glVertexAttribPointer(VERTEX_ATTRIB_TEXTURE,2,GL_FLOAT,GL_FALSE,sizeof(ShapeVertex), (const GLvoid *) (offsetof(ShapeVertex,texCoords)));
+
+     glBindBuffer(GL_ARRAY_BUFFER,0);
+     glBindVertexArray(0);
+}
+
+
+
+
+
+//Gère les textures
+
+void Map::InitTextures(vector<string> addr)
+{
+	
+	
+
+	glUniform1i(LocTexture,0);
+	unique_ptr<Image> img[6];
+	img[0]	 = loadImage(addr[0]);
+	img[1] = loadImage(addr[1]);
+	img[2] = loadImage(addr[2]);
+	img[3] = loadImage(addr[3]);
+	img[4] = loadImage(addr[4]);
+	img[5] = loadImage(addr[5]);
+
+	for(int i=0;i<6;i++){
+		glGenTextures(1,&this->textures[i]);
+		glBindTexture(GL_TEXTURE_2D,this->textures[i]);
+		glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,img[i]->getWidth() ,img[i]->getHeight() ,0, GL_RGBA,GL_FLOAT,img[i]->getPixels());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	
+	InitTexturesMenu();
+	 
+}
+
+
+
+
 /*
 *Charge les données dans la structure de carte grâce à l'adresse vers un fichier texte
 */
@@ -202,7 +515,302 @@ void Map::ReloadLevel()
 
 
 
-/*
+
+
+
+//Gère la caméra
+
+void Map::BuildMatrix(GLint Id)
+{
+	LocMVPMatrix = glGetUniformLocation(Id, "uMVPMatrix");
+	LocMVMatrix = glGetUniformLocation(Id, "uMVMatrix");
+	LocNormalMatrix = glGetUniformLocation(Id, "uNormalMatrix");
+			
+	LocTexture = glGetUniformLocation(Id, "uTexture");
+
+	ProjMatrix = glm::perspective(glm::radians(70.f), 800.f/600.f,0.1f,100.f );
+    MVMatrix= player.camera.getViewMatrix()*glm::translate(glm::mat4(1.f),glm::vec3(0.f,0.f,-5.f));
+    NormalMatrix = glm::transpose( glm::inverse(MVMatrix));
+}
+
+
+void Map::LoadMeshes()
+{
+	//Assimp étant le fruit de l'union entre un démon et un étron, cette partie n'est pas implémentée
+	
+	//On s'occupe d'abord des objets
+	
+	
+	// cout << ennemis[0].modele << endl;
+	// ennemis[0].modele3D=Model(ennemis[0].modele);
+	//Puis des ennemis
+	// for(auto& ennemi:ennemis){
+		// ennemi.modele3D=Model(ennemi.modele);
+	// }
+}
+
+
+
+/*****************************************************************
+							UPDATE
+	****************************************************************/	
+
+
+
+void Map::UpdateMove(int vitesseF, int vitesseL, int rotateF)
+{
+	if(!player.isInMovement &&!player.isTurning ){
+		if(vitesseF != 0 || vitesseL != 0){
+			player.isInMovement=true;
+			player.moveEnnemi=true;
+		}
+		switch(player.orientation){
+			case 2:
+				if(vitesseF>0 && (schema[player.x][player.y-1]!=0 && AreDoorUnlocked(player.x,player.y-1) )){
+					if(player.drowning<0.2 || schema[player.x][player.y-1]==2){
+						player.y--;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+				}
+				else if(vitesseF<0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
+					if(player.drowning<0.2 || schema[player.x][player.y+1]==2){
+						player.y++;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+				}
+				if(vitesseL>0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
+					if(player.drowning<0.2 || schema[player.x+1][player.y]==2){
+						player.x++;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+				}
+					
+				else if(vitesseL<0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
+					if(player.drowning<0.2 || schema[player.x-1][player.y]==2){
+						player.x--;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+				}
+					
+			break;
+			case 3:
+				if(vitesseF>0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
+					if(player.drowning<0.2|| schema[player.x-1][player.y]==2){
+						player.x--;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+					
+				}
+				else if(vitesseF<0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
+					if(player.drowning<0.2 || schema[player.x+1][player.y]==2){
+						player.x++;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+					
+				}
+				if(vitesseL>0 && schema[player.x][player.y-1]!=0&& AreDoorUnlocked(player.x,player.y-1)){
+					if(player.drowning<0.2 || schema[player.x][player.y-1]==2){
+						player.y--;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+					
+				}
+				else if(vitesseL<0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
+					if(player.drowning<0.2 || schema[player.x][player.y+1]==2){
+						player.y++;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+					
+				}
+			break;
+			case 0:
+				if(vitesseF>0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
+					if(player.drowning<0.2 || schema[player.x][player.y+1]==2){
+						player.y++;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+					
+				}
+				else if(vitesseF<0 && schema[player.x][player.y-1]!=0&& AreDoorUnlocked(player.x,player.y-1)){
+					if(player.drowning<0.2 || schema[player.x][player.y-1]==2){
+						player.y--;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+					
+				}
+				if(vitesseL>0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
+					if(player.drowning<0.2 || schema[player.x-1][player.y]==2){
+						player.x--;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+					
+				}
+				else if(vitesseL<0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
+					if(player.drowning<0.2 || schema[player.x+1][player.y]==2){
+						player.x++;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+					
+			}
+			break;
+			case 1:
+				if(vitesseF>0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
+					if(player.drowning<0.2 || schema[player.x+1][player.y]==2){
+						player.x++;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+					
+				}
+				else if(vitesseF<0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
+					if(player.drowning<0.2 || schema[player.x-1][player.y]==2){
+						player.x--;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+					
+				}
+				if(vitesseL>0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
+					if(player.drowning<0.2 || schema[player.x][player.y+1]==2){
+						player.y++;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+					
+				}
+				else if(vitesseL<0 && schema[player.x][player.y-1]!=0&& AreDoorUnlocked(player.x,player.y-1)){
+					if(player.drowning<0.2 || schema[player.x][player.y-1]==2){
+						player.y--;
+					}
+					else{
+						player.drowning-=0.2;
+					}
+					
+				}
+			break;
+			default: 
+			break;
+			
+		}
+	}
+	if(schema[player.x][player.y]==2 && player.drowning < .8f){
+		player.drown();
+	}
+	else if(schema[player.x][player.y]!=2){
+		player.drowning=0;
+	}
+
+	player.UpdateMove(vitesseF,vitesseL, rotateF);
+}
+
+
+
+
+
+
+
+
+
+bool Map::CollectObjets()
+{
+
+	for(vector<Objet>::iterator it = objets.begin() ; it!=objets.end();it++)
+	//for(auto& objet:objets) 
+	{
+		if((player.x == it->x) && (player.y == it->y))
+		{
+
+			player+=(*it);
+			objets.erase(it);			
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+
+
+
+
+void Map::UpdateEnnemis(bool tour)
+{
+	
+	for(vector<Ennemi>::iterator it = ennemis.begin() ; it!=ennemis.end();it++)
+	{
+		Update(tour,this,*it);
+	}
+
+}
+
+
+void Map::AttackEnnemis()
+{
+	
+	for(vector<Ennemi>::iterator it = ennemis.begin() ; it!=ennemis.end();it++)
+	{
+		if((player.x+glm::sin(glm::radians(player.orientation*90.f+180.f))  == it->x) && (player.y+glm::cos(glm::radians(player.orientation*90.f+180.f))  == it->y))
+		{
+			it->pv = it->pv - player.attaque;
+			
+		}
+
+		if(it->pv <= 0) 
+		{
+			ennemis.erase(it);
+			if(ennemis.size()==0)
+				break;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+/*****************************************************************
+							DRAW
+	****************************************************************/		
+	
+	
+	
+	
+	/*
 *Affiche la carte uniquement dans les parties couvertes par la caméra
 */
 void Map::AfficherMap(){
@@ -231,145 +839,11 @@ void Map::AfficherMap(){
 	}
 }
 
-/*
-*Nettoie la mémoire de tous les pointeurs de la carte
-*/
-Map::~Map()
-{
-
-	free(this->schema);
-}
 
 
-//Dessine la carte en 3D 
-void Map::DrawMap(float time){
-	float life = (sin(glm::radians(90.f-player.pv)*time)*sin(glm::radians((90.f-player.pv)*time)))*(90.1f-player.pv)/5.f;
-	ProjMatrix = glm::perspective(glm::radians(70.f+sin(time)*sin(time)+life), 800.f/600.f,0.1f,100.f );
-	Cube cube;
-	//mat4 MVMatrix;
-	glBindTexture(GL_TEXTURE_2D,textures[0]);
-	glUniform1i(LocTexture,0); 
-	for(int i=0;i<this->nbtilesY; i++){ //MUR
-		for(int j=0;j<this->nbtilesX; j++){
-			if(schema[i][j]==0){
-				
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
-				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
-				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
-				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
-				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
-				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
-				 
-				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
-				 
-				  MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
-				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
-				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
-				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
-				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
-				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
-				 
-				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
-			}
-		}
-	}
-		glBindTexture(GL_TEXTURE_2D,textures[5]);
-	for(int i=0;i<this->nbtilesY; i++){ //MUR DU HAUT
-		for(int j=0;j<this->nbtilesX; j++){
-			if(schema[i][j]==0){
-				
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning+2-life/100.f, -2*j)); // Translation
-				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
-				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
-				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
-				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
-				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
-				 
-				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
-				 
-			}
-		}
-	}
-	
-	
-	glBindTexture(GL_TEXTURE_2D,textures[1]);
-	for(int i=0;i<this->nbtilesY; i++){ //SOL
-		for(int j=0;j<this->nbtilesX; j++){
-			
-			if(schema[i][j]==1 ||schema[i][j]==3 ||schema[i][j]==4){
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
-				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
-				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
-				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
-				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
-				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
-				 
-				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
-			}
-		}
-	}
-	glBindTexture(GL_TEXTURE_2D,textures[4]);
-	for(int i=0;i<this->nbtilesY; i++){ //SOL VICTOIRE
-		for(int j=0;j<this->nbtilesX; j++){
-			
-			if(schema[i][j]==5){
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
-				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
-				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
-				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
-				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
-				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
-				 
-				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
-			}
 
-		}
-	}
-	
-	
-	glBindTexture(GL_TEXTURE_2D,textures[2]);
-	for(int i=0;i<this->nbtilesY; i++){ //EAU
-		for(int j=0;j<this->nbtilesX; j++){
-			
-			if(schema[i][j]==2){
-				
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-life/100.f, -2*j)); // Translation
-				 MVMatrix = glm::rotate(MVMatrix,glm::radians(90.f),glm::vec3(0.f,0.f,-1.f));
-				 // MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -7+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*j)); // Translation
-				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
-				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
-				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
-				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
-				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
-				 
-				 // glDrawArrays(GL_LINES,0,cube.getVertexCount());
-				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
-			}
-		}
-	}
-	
-	
-	
-	glBindTexture(GL_TEXTURE_2D,textures[3]);
-	for(int i=0;i<this->nbtilesY; i++){  //PORTE ?
-		for(int j=0;j<this->nbtilesX; j++){
-			
-			if(schema[i][j]==3){
-				 MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*i, -5+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning-(player.gold/100)*2, -2*j)); // Translation
-				// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
-				MVMatrix = player.camera.getViewMatrix()*MVMatrix;
-				 glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
-				 glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
-				 glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
-				 
-				 glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount());
-			}
-		}
-	}
-	DrawEnnemis(time);
-	DrawObjets(time);
-	
-}
+
+
 
 
 
@@ -551,20 +1025,6 @@ void Map::DrawDefaite(float time, int hover){
 	glDrawArrays(GL_TRIANGLES,0,cube.getVertexCount()/6);
 }
 
-void Map::LoadMeshes()
-{
-	//Assimp étant le fruit de l'union entre un démon et un étron, cette partie n'est pas implémentée
-	
-	//On s'occupe d'abord des objets
-	
-	
-	// cout << ennemis[0].modele << endl;
-	// ennemis[0].modele3D=Model(ennemis[0].modele);
-	//Puis des ennemis
-	// for(auto& ennemi:ennemis){
-		// ennemi.modele3D=Model(ennemi.modele);
-	// }
-}
 
 
 void Map::DrawMeshes(GLint id, float time){//, Model m){
@@ -578,325 +1038,38 @@ void Map::DrawMeshes(GLint id, float time){//, Model m){
 				 // m.Draw();
 }
 
-void Map::DrawEnnemis(float time)
-{
-	Cube cube;
-	//mat4 MVMatrix;
-	glBindTexture(GL_TEXTURE_2D,textures[0]);
-	glUniform1i(LocTexture,0); 
-	for(auto& ennemi : ennemis){
-		//On s'occupe d'abord des objets
-		MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*ennemi.realX-sin(time*10)/50., -5.25-sin(time*10)/50.+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*ennemi.realY+sin(time*13)/50.)); // Translation
-		MVMatrix = glm::scale(MVMatrix,glm::vec3(0.5,0.7+sin(time*10)/100.,0.2)); // Translation
-		// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
-		MVMatrix = player.camera.getViewMatrix()*MVMatrix;
-		glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
-		glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
-		glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
-		// ennemi.modele3D.Draw();
-		glDrawArrays(GL_LINES,0,cube.getVertexCount());
-	}
-}
 
-void Map::UpdateEnnemis(bool tour)
-{
+
+
+
+
+
+
+
 	
-	float distanceVect[2];	
-	int direction[2];
-	float distanceNorme;
-
-
-	for(vector<Ennemi>::iterator it = ennemis.begin() ; it!=ennemis.end();it++)
-	{
-		if(abs(it->realX - it->x) > VITESSE_DEPLACEMENT*2 || abs(it->realY - it->y) > VITESSE_DEPLACEMENT*2){
-			if(abs(it->realX - it->x) > VITESSE_DEPLACEMENT*2){
-				it->realX -= VITESSE_DEPLACEMENT/4.*abs(it->x+1)/(it->x+1);
-			}
-			if(abs(it->realY - it->y) > VITESSE_DEPLACEMENT*2){
-				it->realY -= VITESSE_DEPLACEMENT/4.*abs(it->y+1)/(it->y+1);
-			}
-		}
-		else if(tour){
-			//calcul vecteur distance, norme distance, direction vecteur
-			it->realX=it->x;
-			it->realY=it->y;
-			distanceVect[0] = abs(it->x - player.x);
-			distanceVect[1]= abs(it->y - player.y);
-			
-			if((it->x - player.x) != 0)
-			{
-				direction[0] = -(it->x - player.x)/distanceVect[0]; //pour voir la direction du vecteur ennemi-player afin que l'ennemi parte pas dans l'autre sens
-				direction[1] = -(it->y - player.y)/distanceVect[1];
-			}
-			
-			else
-			{
-				direction[0] = 0;
-				direction[1] = 0;
-			}
-
-			//cout << direction[0] << "," << direction[1] << endl;
-
-			distanceNorme = std::sqrt(distanceVect[0]*distanceVect[0] + distanceVect[1] * distanceVect[1]);
-			
-			if(it->isAlerted)
-			{
-				//cout << distanceVect[0] + distanceVect[1] << endl;
-				if((distanceNorme<=6) && (distanceNorme > 0.5))
-				{
-					if(distanceVect[0] + distanceVect[1] == 1){
-						player.pv = player.pv - it->attaque;
-					}
-
-					else
-					{
-						if(distanceVect[0] >= distanceVect[1])
-						{
-							if(schema[it->x+direction[0]][it->y] != 0)
-							{
-								it->x += direction[0];
-
-							}
-
-							else
-							{
-								it->y += direction[1];
-							}
-						}
-
-						else if(distanceVect[0] < distanceVect[1])
-						{
-							if(schema[it->x][it->y+direction[1]] != 0)
-							{
-								it->y += direction[1];
-							}
-
-							else
-							{
-								it->x += direction[0];
-							}
-						}
-					}
-				//cout << it->x << "," << it->y << endl;
-				}
-
-				else 
-				{
-					it->isAlerted = false;
-				}
-
-			}
-			else
-			{
-				if(distanceNorme<=3.5)
-				{
-					it->isAlerted=true;
-				}
-			}
-		}
-	}
-
-}
-
-void Map::AttackEnnemis()
-{
 	
-	for(vector<Ennemi>::iterator it = ennemis.begin() ; it!=ennemis.end();it++)
-	{
-		if((player.x+glm::sin(glm::radians(player.orientation*90.f+180.f))  == it->x) && (player.y+glm::cos(glm::radians(player.orientation*90.f+180.f))  == it->y))
-		{
-			it->pv = it->pv - player.attaque;
-			
-		}
-
-		if(it->pv <= 0) 
-		{
-			ennemis.erase(it);
-			if(ennemis.size()==0)
-				break;
-		}
-	}
-}
-
-void Map::DrawObjets(float time)
-{
-	Cube cube;
-	//mat4 MVMatrix;
-	glBindTexture(GL_TEXTURE_2D,textures[0]);
-	glUniform1i(LocTexture,0); 
-	for(auto& objet : objets){
-		/*if(objet.id >= itemMesh.size()){
-			//Si on voit que l'id est plus grand que la taille du tableau
-			//On sait que l'id ne fait pas partie de celui-ci
-			//Donc on le charge ! 
-		}*/
-		MVMatrix = glm::translate(glm::mat4(1), glm::vec3(-2*objet.x, -5.5+cos(time)/20.+((int)player.isInMovement)*VITESSE_DEPLACEMENT*2*sin(time*M_PI*4)+player.drowning, -2*objet.y)); // Translation
-		MVMatrix = glm::rotate(MVMatrix, time/5.f, glm::vec3(0.f,1.f,0.f));
-		MVMatrix = glm::scale(MVMatrix,glm::vec3(0.2+sin(time+1)/100.,0.2+sin(time+1)/100.,0.2+sin(time+1)/100.)); // Translation
-		// MVMatrix = glm::rotate(MVMatrix, time, glm::vec3(1.,0.,0.));
-		MVMatrix = player.camera.getViewMatrix()*MVMatrix;
-		glUniformMatrix4fv (LocMVPMatrix,1,GL_FALSE,glm::value_ptr(ProjMatrix * MVMatrix));
-		glUniformMatrix4fv (LocMVMatrix,1,GL_FALSE,glm::value_ptr(MVMatrix));
-		glUniformMatrix4fv (LocNormalMatrix,1,GL_FALSE,glm::value_ptr(NormalMatrix));
-				 
-		glDrawArrays(GL_TRIANGLES,0,(cube.getVertexCount()/6)*5);
-	}
 	
-}
-
-
-bool Map::CollectObjets()
+	
+	
+	
+	
+	
+	
+	
+	
+	
+/*****************************************************************
+							DESTRUCTEUR
+	****************************************************************/	
+	/*
+*Nettoie la mémoire de tous les pointeurs de la carte
+*/
+Map::~Map()
 {
 
-	for(vector<Objet>::iterator it = objets.begin() ; it!=objets.end();it++)
-	//for(auto& objet:objets) 
-	{
-		if((player.x == it->x) && (player.y == it->y))
-		{
-
-			player+=(*it);
-			objets.erase(it);			
-
-			return true;
-		}
-	}
-
-	return false;
+	free(this->schema);
 }
 
-
-
-//Gère les textures
-
-void Map::InitTextures(vector<string> addr)
-{
-	
-	
-
-	glUniform1i(LocTexture,0);
-	
-	unique_ptr<Image> imgPave = loadImage(addr[0]);
-	unique_ptr<Image> imgBrique = loadImage(addr[1]);
-	unique_ptr<Image> imgDoor = loadImage(addr[2]);
-	unique_ptr<Image> imgEau = loadImage(addr[3]);
-	unique_ptr<Image> imgVictoire = loadImage(addr[4]);
-	unique_ptr<Image> imgMur2 = loadImage(addr[5]);
-
-	
-	glGenTextures(1,&this->textures[0]);
-    glBindTexture(GL_TEXTURE_2D,this->textures[0]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgPave->getWidth() ,imgPave->getHeight() ,0, GL_RGBA,GL_FLOAT,imgPave->getPixels());
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	 
-    glGenTextures(1,&this->textures[1]);
-    glBindTexture(GL_TEXTURE_2D,this->textures[1]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgBrique->getWidth() ,imgBrique->getHeight() ,0, GL_RGBA,GL_FLOAT,imgBrique->getPixels());
-	 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	 
-	glGenTextures(1,&this->textures[2]);
-    glBindTexture(GL_TEXTURE_2D,this->textures[2]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgDoor->getWidth() ,imgDoor->getHeight() ,0, GL_RGBA,GL_FLOAT,imgDoor->getPixels());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	glGenTextures(1,&this->textures[3]);
-    glBindTexture(GL_TEXTURE_2D,this->textures[3]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgEau->getWidth() ,imgEau->getHeight() ,0, GL_RGBA,GL_FLOAT,imgEau->getPixels());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	glGenTextures(1,&this->textures[4]);
-    glBindTexture(GL_TEXTURE_2D,this->textures[4]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgVictoire->getWidth() ,imgVictoire->getHeight() ,0, GL_RGBA,GL_FLOAT,imgVictoire->getPixels());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D,0);
-	
-	glGenTextures(1,&this->textures[5]);
-    glBindTexture(GL_TEXTURE_2D,this->textures[5]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgMur2->getWidth() ,imgMur2->getHeight() ,0, GL_RGBA,GL_FLOAT,imgMur2->getPixels());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D,0);
-	
-	InitTexturesMenu();
-	 
-}
-
-
-void Map::InitTexturesMenu()
-{
-	
-	
-
-	glUniform1i(LocTexture,0);
-	
-	unique_ptr<Image> imgPave = loadImage("assets/textures/menu/menufond3.jpg");
-	unique_ptr<Image> imgBrique = loadImage("assets/textures/menu/lose.jpg");
-	unique_ptr<Image> imgDoor = loadImage("assets/textures/menu/win.jpg");
-	unique_ptr<Image> imgEau = loadImage("assets/textures/menu/play.jpg");
-	unique_ptr<Image> imgVictoire = loadImage("assets/textures/menu/replay.jpg");
-	unique_ptr<Image> imgQuit = loadImage("assets/textures/menu/quit.jpg");
-	unique_ptr<Image> imgMenu = loadImage("assets/textures/menu/menu.jpg");
-
-	
-	glGenTextures(1,&this->texturesMenu[0]);
-    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[0]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgPave->getWidth() ,imgPave->getHeight() ,0, GL_RGBA,GL_FLOAT,imgPave->getPixels());
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	 
-    glGenTextures(1,&this->texturesMenu[1]);
-    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[1]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgBrique->getWidth() ,imgBrique->getHeight() ,0, GL_RGBA,GL_FLOAT,imgBrique->getPixels());
-	 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	 
-	glGenTextures(1,&this->texturesMenu[2]);
-    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[2]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgDoor->getWidth() ,imgDoor->getHeight() ,0, GL_RGBA,GL_FLOAT,imgDoor->getPixels());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	glGenTextures(1,&this->texturesMenu[3]);
-    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[3]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgEau->getWidth() ,imgEau->getHeight() ,0, GL_RGBA,GL_FLOAT,imgEau->getPixels());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	glGenTextures(1,&this->texturesMenu[4]);
-    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[4]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgVictoire->getWidth() ,imgVictoire->getHeight() ,0, GL_RGBA,GL_FLOAT,imgVictoire->getPixels());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	glGenTextures(1,&this->texturesMenu[5]);
-    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[5]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgQuit->getWidth() ,imgQuit->getHeight() ,0, GL_RGBA,GL_FLOAT,imgQuit->getPixels());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	glGenTextures(1,&this->texturesMenu[6]);
-    glBindTexture(GL_TEXTURE_2D,this->texturesMenu[6]);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA,imgMenu->getWidth() ,imgMenu->getHeight() ,0, GL_RGBA,GL_FLOAT,imgMenu->getPixels());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D,0);
-	 
-}
 
 void Map::cleanTextures()
 {
@@ -917,228 +1090,7 @@ void Map::cleanTextures()
 }
 
 
-//Gère la caméra
-
-void Map::BuildMatrix(GLint Id)
-{
-	LocMVPMatrix = glGetUniformLocation(Id, "uMVPMatrix");
-	LocMVMatrix = glGetUniformLocation(Id, "uMVMatrix");
-	LocNormalMatrix = glGetUniformLocation(Id, "uNormalMatrix");
-			
-	LocTexture = glGetUniformLocation(Id, "uTexture");
-
-	ProjMatrix = glm::perspective(glm::radians(70.f), 800.f/600.f,0.1f,100.f );
-    MVMatrix= player.camera.getViewMatrix()*glm::translate(glm::mat4(1.f),glm::vec3(0.f,0.f,-5.f));
-    NormalMatrix = glm::transpose( glm::inverse(MVMatrix));
-}
-
-void Map::UpdateMove(int vitesseF, int vitesseL, int rotateF)
-{
-	if(!player.isInMovement &&!player.isTurning ){
-		if(vitesseF != 0 || vitesseL != 0){
-			player.isInMovement=true;
-			player.moveEnnemi=true;
-		}
-		switch(player.orientation){
-			case 2:
-				if(vitesseF>0 && (schema[player.x][player.y-1]!=0 && AreDoorUnlocked(player.x,player.y-1) )){
-					if(player.drowning<0.2 || schema[player.x][player.y-1]==2){
-						player.y--;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-				}
-				else if(vitesseF<0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
-					if(player.drowning<0.2 || schema[player.x][player.y+1]==2){
-						player.y++;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-				}
-				if(vitesseL>0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
-					if(player.drowning<0.2 || schema[player.x+1][player.y]==2){
-						player.x++;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-				}
-					
-				else if(vitesseL<0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
-					if(player.drowning<0.2 || schema[player.x-1][player.y]==2){
-						player.x--;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-				}
-					
-			break;
-			case 3:
-				if(vitesseF>0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
-					if(player.drowning<0.2|| schema[player.x-1][player.y]==2){
-						player.x--;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-					
-				}
-				else if(vitesseF<0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
-					if(player.drowning<0.2 || schema[player.x+1][player.y]==2){
-						player.x++;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-					
-				}
-				if(vitesseL>0 && schema[player.x][player.y-1]!=0&& AreDoorUnlocked(player.x,player.y-1)){
-					if(player.drowning<0.2 || schema[player.x][player.y-1]==2){
-						player.y--;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-					
-				}
-				else if(vitesseL<0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
-					if(player.drowning<0.2 || schema[player.x][player.y+1]==2){
-						player.y++;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-					
-				}
-			break;
-			case 0:
-				if(vitesseF>0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
-					if(player.drowning<0.2 || schema[player.x][player.y+1]==2){
-						player.y++;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-					
-				}
-				else if(vitesseF<0 && schema[player.x][player.y-1]!=0&& AreDoorUnlocked(player.x,player.y-1)){
-					if(player.drowning<0.2 || schema[player.x][player.y-1]==2){
-						player.y--;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-					
-				}
-				if(vitesseL>0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
-					if(player.drowning<0.2 || schema[player.x-1][player.y]==2){
-						player.x--;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-					
-				}
-				else if(vitesseL<0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
-					if(player.drowning<0.2 || schema[player.x+1][player.y]==2){
-						player.x++;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-					
-			}
-			break;
-			case 1:
-				if(vitesseF>0 && schema[player.x+1][player.y]!=0 && AreDoorUnlocked(player.x+1,player.y)){
-					if(player.drowning<0.2 || schema[player.x+1][player.y]==2){
-						player.x++;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-					
-				}
-				else if(vitesseF<0 && schema[player.x-1][player.y]!=0 && AreDoorUnlocked(player.x-1,player.y)){
-					if(player.drowning<0.2 || schema[player.x-1][player.y]==2){
-						player.x--;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-					
-				}
-				if(vitesseL>0 && schema[player.x][player.y+1]!=0&& AreDoorUnlocked(player.x,player.y+1)){
-					if(player.drowning<0.2 || schema[player.x][player.y+1]==2){
-						player.y++;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-					
-				}
-				else if(vitesseL<0 && schema[player.x][player.y-1]!=0&& AreDoorUnlocked(player.x,player.y-1)){
-					if(player.drowning<0.2 || schema[player.x][player.y-1]==2){
-						player.y--;
-					}
-					else{
-						player.drowning-=0.2;
-					}
-					
-				}
-			break;
-			default: 
-			break;
-			
-		}
-	}
-	if(schema[player.x][player.y]==2 && player.drowning < .8f){
-		player.drown();
-	}
-	else if(schema[player.x][player.y]!=2){
-		player.drowning=0;
-	}
-
-	player.UpdateMove(vitesseF,vitesseL, rotateF);
-}
-
-
-
-
-//Initialize de vbos and vaos
-void Map::InitShaderDatas(GLuint vao, GLuint vbo){
-	 Cube cube;
-	 
-     glBindBuffer(GL_ARRAY_BUFFER,vbo);
-
-     glBufferData(GL_ARRAY_BUFFER, cube.getVertexCount()*sizeof(ShapeVertex), cube.getDataPointer(), GL_STATIC_DRAW);
-
-     glBindBuffer(GL_ARRAY_BUFFER,0);
-	 
-	 
-
-     
-     glBindVertexArray(vao);
-
-
-     glEnableVertexAttribArray(VERTEX_ATTRIB_POSITION);
-     glEnableVertexAttribArray(VERTEX_ATTRIB_NORMALS);
-     glEnableVertexAttribArray(VERTEX_ATTRIB_TEXTURE);
-
-     glBindBuffer(GL_ARRAY_BUFFER,vbo);
-
-     glVertexAttribPointer(VERTEX_ATTRIB_POSITION,3,GL_FLOAT,GL_FALSE,sizeof(ShapeVertex), (const GLvoid *) (offsetof(ShapeVertex,position)));
-     glVertexAttribPointer(VERTEX_ATTRIB_NORMALS,3,GL_FLOAT,GL_FALSE,sizeof(ShapeVertex), (const GLvoid *) (offsetof(ShapeVertex,normal)));
-     glVertexAttribPointer(VERTEX_ATTRIB_TEXTURE,2,GL_FLOAT,GL_FALSE,sizeof(ShapeVertex), (const GLvoid *) (offsetof(ShapeVertex,texCoords)));
-
-     glBindBuffer(GL_ARRAY_BUFFER,0);
-     glBindVertexArray(0);
-}
-
-
-
+	
+	
 
 

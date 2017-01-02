@@ -6,7 +6,7 @@ assets/textures/mur.jpg
 assets/textures/sol.jpg
 assets/textures/eau3.jpg
 assets/textures/porte.jpg
-assets/textures/victoire.jpg
+assets/textures/sol5.jpg
 assets/textures/mur7.jpg
 1
 1:5:12:PineApple 0:120:assets/models/bob.obj
