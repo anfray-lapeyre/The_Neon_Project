@@ -1,3 +1,10 @@
+/*
+* 					  Anfray Lapeyre - Noemie Busquet - Marion Prigent
+*									The Neon Project
+*					 				    02/01/2017
+*				      				  OPENGL - IMAC2
+*/
+
 #include "inclusion.hpp"
 #include "tile_map.hpp"
 #include "game_manager.hpp"

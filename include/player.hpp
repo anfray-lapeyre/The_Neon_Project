@@ -1,3 +1,11 @@
+/*
+* 					  Anfray Lapeyre - Noemie Busquet - Marion Prigent
+*									The Neon Project
+*					 				    02/01/2017
+*				      				  OPENGL - IMAC2
+*/
+
+
 #ifndef PLAYER_H_
 #define PLAYER_H_
 

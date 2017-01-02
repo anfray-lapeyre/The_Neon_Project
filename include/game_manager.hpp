@@ -1,9 +1,8 @@
 /*
-* 					  Anfray Lapeyre 
-*			Pong Project (wich is actually a Breakout)
-*					 	21/12/2016
-*				       C++ - IMAC2
-*				  anfray.lapeyre@gmai.com
+* 					  Anfray Lapeyre - Noemie Busquet - Marion Prigent
+*									The Neon Project
+*					 				    02/01/2017
+*				      				  OPENGL - IMAC2
 */
 #ifndef GAME_MANAGER_H_
 #define GAME_MANAGER_H_
