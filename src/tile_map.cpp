@@ -79,7 +79,12 @@ void Map::ChargerMap_donnees(FILE* F)
 	}
 	LoadMeshes();
 	// Chargement de la musique
-	 music = Mix_LoadWAV("assets/music/CaravanPalace-LoneDigger.wav");
+	if(actual_lvl <1){
+		music = Mix_LoadWAV("assets/music/CaravanPalace-LoneDigger.wav");
+	}else{
+		music = Mix_LoadWAV("assets/music/phantom.wav");
+
+	}
     musicBeep = Mix_LoadWAV("assets/music/pew.wav");
     musicLoot = Mix_LoadWAV("assets/music/laser.wav");
 
